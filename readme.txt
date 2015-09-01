@@ -1,5 +1,7 @@
-Building Boxes (AMIs and VirtualBox) using Packer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Building Alfresco Boxes (AMIs and VirtualBox) using Packer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Support for building and provisioning Alfresco One (repository, single instance only at present), sync and benchmark boxes.
 
 cd packer
 
@@ -15,8 +17,8 @@ cd packer
 
 ./pack.sh -s -ldap ldapuser:ldappassword -syncDistVer 4.x -syncDistBuild 425 -key <aws key> -secret <aws secret> -packer <packer executable path> -buildnames [virtualbox-iso|amazon-ebs|docker]
 
-Provisioning/Running AWS Instances using Vagrant
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Provisioning/Running Alfresco AWS Instances using Vagrant
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 cd vagrant
 
