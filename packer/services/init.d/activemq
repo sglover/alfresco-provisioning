@@ -1,0 +1,6 @@
+#!/bin/bash
+# chkconfig: 2345 80 20
+cd /data/alfresco/activemq
+export ACTIVEMQ_OPTS_MEMORY="-XX:MaxPermSize=1024m -Xms1G -Xmx8G"
+export ACTIVEMQ_DEBUG_OPTS="-agentpath:/data/alfresco/yourkit/yourkit/libyjpagent.so=onexit=snapshot,dir=/data/alfresco/yourkit/snapshots,probe_off=*,probe_on=com.yourkit.probes.builtin.Databases"
+/bin/su activemq -c "bin/activemq $@"

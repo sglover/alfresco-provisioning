@@ -1,0 +1,3 @@
+JAVA_OPTS="$JAVA_OPTS -Djava.library.path=/data/alfresco/jnotify/64-bit\ Linux -server -XX:MaxPermSize=1024m -Xms256M -Xmx2G -Dmongo.config.host=127.0.0.1"
+
+

@@ -1,0 +1,60 @@
+#!/bin/sh
+#
+# chkconfig: 2345 80 30 
+# description: Alfresco One
+#
+### BEGIN INIT INFO
+# Provides:          alfresco
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:     $local_fs $remote_fs
+# Should-Start:      $all
+# Should-Stop:       $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start/stop Alfresco
+# Description:       Start/stop Alfresco
+### END INIT INFO
+
+RETVAL=0
+TMPDIR=/mnt/tomcattemp
+ALFUSER=alfresco
+
+start () {
+    ls /mnt > /dev/null
+    if [ ! -d "$TMPDIR" ] ; then
+        mkdir $TMPDIR
+        chown $ALFUSER:$ALFUSER $TMPDIR
+    fi
+    if [ ! -d "$TMPDIR" ] ; then
+        echo  "$TMPDIR could not be created" >&2
+        exit 1
+    fi
+    sudo su -c "/data/alfresco/alfresco-5.0/alfresco.sh start $2" $ALFUSER
+    RETVAL=$?
+    if [ -d "/var/lock/subsys" ] && [ `id -u` = 0 ] && [ $RETVAL -eq 0 ] ; then
+        touch /var/lock/subsys/alfresco
+    fi
+}
+
+stop () {
+    sudo su -c "/data/alfresco/alfresco-5.0/alfresco.sh stop $2" $ALFUSER
+    RETVAL=$?
+}
+
+
+case "$1" in
+    start)
+        start "$@"
+        ;;
+    stop)
+        stop "$@"
+        ;;
+    restart)
+        stop "$@"
+        start "$@"
+        ;;
+    *)
+        sudo su -c "/data/alfresco/alfresco-5.0/alfresco.sh $@" $ALFUSER
+        RETVAL=$?
+esac
+exit $RETVAL

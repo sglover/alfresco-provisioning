@@ -1,0 +1,247 @@
+{
+    "builders": [{
+        "type": "amazon-ebs",
+        "access_key": "{{user `aws_access_key`}}",
+        "ami_name": "{{user `ami_name`}}",
+        "ami_description": "{{user `ami_description`}}",
+        "instance_type": "m3.2xlarge",
+        "region": "{{user `ami_region`}}",
+        "secret_key": "{{user `aws_secret_key`}}",
+        "source_ami": "{{user `source_ami`}}",
+        "ssh_username": "ubuntu",
+        "security_group_id": "sg-24ec6652",
+        "ami_block_device_mappings": [
+        {
+            "device_name": "/dev/sda1",
+            "volume_size": 30,
+            "volume_type": "gp2",
+            "delete_on_termination": true
+        },
+        {
+            "device_name": "/dev/sdb",
+            "volume_size": 40,
+            "volume_type": "io1",
+            "iops": 240,
+            "delete_on_termination": true
+        },
+        {
+            "device_name": "/dev/sdc",
+            "virtual_name": "ephemeral0"
+        }],
+        "launch_block_device_mappings": [
+        {
+            "device_name": "/dev/sda1",
+            "volume_size": 30,
+            "volume_type": "gp2",
+            "delete_on_termination": true
+        },
+        {
+            "device_name": "/dev/sdb",
+            "volume_size": 40,
+            "volume_type": "io1",
+            "iops": 240,
+            "delete_on_termination": true
+        },
+        {
+            "device_name": "/dev/sdc",
+            "virtual_name": "ephemeral0"
+        }],
+        "tags": {
+        }
+        },
+        {
+        "type": "virtualbox-iso",
+        "guest_os_type": "Ubuntu_64",
+        "vboxmanage": [
+            ["modifyvm", "{{.Name}}", "--vram", "32"],
+            ["modifyvm", "{{.Name}}", "--memory", "2048"],
+            ["modifyvm", "{{.Name}}", "--cpus", "2"]
+        ],
+        "disk_size" : 10000,
+        "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04.2-server-amd64.iso",
+        "iso_checksum": "83aabd8dcf1e8f469f3c72fff2375195",
+        "iso_checksum_type": "md5",
+        "vm_name": "packer-ubuntu-14.04.2-amd64",
+        "http_directory" : "http",
+        "http_port_min" : 9101,
+        "http_port_max" : 9101,
+        "ssh_username": "ubuntu",
+        "ssh_password": "ubuntu",
+        "ssh_wait_timeout": "50m",
+        "boot_command" : [
+            "<esc><esc><enter><wait>",
+            "/install/vmlinuz noapic ",
+            "auto-install/enable=true ",
+            "debconf/priority=critical ",
+            "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+            "debian-installer=en_US auto locale=en_US kbd-chooser/method=u ",
+            "hostname={{user `hostname`}} ",
+            "fb=false debconf/frontend=noninteractive ",
+            "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA ",
+            "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
+            "initrd=/install/initrd.gz -- <enter>"
+        ],
+        "shutdown_command": "echo 'ubuntu' | sudo -S shutdown -P now"
+    },
+    {
+        "type": "docker",
+        "image": "ubuntu",
+        "commit": true
+    }],
+    "provisioners": [
+    {
+        "type": "shell",
+        "inline": [
+            "mkdir /tmp/init.d /tmp/cron.d /tmp/licenses"
+        ]
+    },
+    {
+        "type": "shell",
+        "script": "prepare-data-partition.sh",
+        "only": [ "amazon-ebs" ]
+    },
+    {
+        "type": "shell",
+        "inline": [
+            "mkdir -p /data/alfresco",
+            "mkdir -p /data/alfresco/yourkit",
+            "chown -R ubuntu:ubuntu /data/alfresco"
+        ],
+        "only": [ "amazon-ebs" ],
+        "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
+    },
+    {
+        "type": "file",
+        "source": "{{user `installer_file`}}",
+        "destination": "/tmp/alfresco-enterprise-{{user `alfresco-version`}}-installer-linux-x64.bin"
+    },
+    {
+        "type": "file",
+        "source": "cache/linux-x86-64",
+        "destination": "/tmp/yourkit"
+    },
+    {
+        "type": "file",
+        "source": "init.d/alfresco",
+        "destination": "/tmp/init.d/alfresco"
+    },
+    {
+        "type": "file",
+        "source": "{{user `sync_zip_path`}}",
+        "destination": "/tmp/sync-dist.zip"
+    },
+    {
+        "type": "file",
+        "source": "init.d/activemq",
+        "destination": "/tmp/init.d/activemq"
+    },
+    {
+        "type": "file",
+        "source": "../../target/service-sync-bundle-1.1-SNAPSHOT.jar",
+        "destination": "/data/alfresco/service-sync-bundle-1.1-SNAPSHOT.jar"
+    },
+    {
+        "type": "file",
+        "source": "files/jmxterm-1.0.0-SNAPSHOT-uber.jar",
+        "destination": "/data/alfresco/jmxterm-1.0.0-SNAPSHOT-uber.jar"
+    },
+    {
+        "type": "file",
+        "source": "{{user `activemq_zip_path`}}",
+        "destination": "/tmp/activemq.tar.gz"
+    },
+    {
+        "type": "file",
+        "source": "cron.d/",
+        "destination": "/tmp/cron.d"
+    },
+    {
+        "type": "file",
+        "source": "{{user `license_path`}}",
+        "destination": "/tmp/alfresco-license.lic"
+    },
+    {
+        "type": "shell",
+        "scripts": [
+            "prepare-users.sh"
+        ],
+        "only": [ "virtualbox-iso" ],
+        "override": {
+            "virtualbox-iso": {
+                "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
+            }
+        }
+    },
+    {
+        "type": "shell",
+        "script": "prepare-packages.sh",
+        "override": {
+            "virtualbox-iso": {
+                "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
+            }
+        }
+    },
+    {
+        "type": "shell",
+        "inline": [
+            "sudo sed -i -e \"s@# deb http://extras.ubuntu.com/ubuntu trusty main@deb http://extras.ubuntu.com/ubuntu trusty main@\" /etc/apt/sources.list",
+            "sudo sed -i -e \"s@# deb http://archive.canonical.com/ubuntu precise partner@deb http://archive.canonical.com/ubuntu precise partner@\" /etc/apt/sources.list"
+        ],
+        "only": [ "virtualbox-iso" ],
+        "override": {
+            "virtualbox-iso": {
+                "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
+            }
+        }
+    },
+    {
+        "type": "shell",
+        "inline": [    
+            "apt-get -q -y install unzip libreoffice"
+        ],
+        "only": [ "amazon-ebs" ],
+        "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
+    },
+    {
+        "type": "shell",
+        "inline": [    
+            "apt-get -q -y install unzip libreoffice linux-image-generic-lts-raring linux-headers-generic-lts-raring build-essential dkms zlib1g-dev libssl-dev libreadline6-dev libyaml-dev curl wget git-core gcc g++ make autoconf python-software-properties screen puppet puppetmaster htop postgresql-client sys-stat htop"
+        ],
+        "only": [ "virtualbox-iso" ],
+        "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
+    },
+    {
+        "type": "shell",
+        "script": "files/alfresco-install.sh",
+        "execute_command": "echo 'ubuntu' | sudo {{ .Vars }} -S sh '{{ .Path }}'",
+        "environment_vars": [
+            "ALF_VERSION={{user `alfresco-version`}}"
+        ]
+    },
+    {
+        "type": "shell",
+        "script": "prepare-vboxguestadditions.sh",
+        "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'",
+        "only": [ "virtualbox-iso" ]
+    }],
+    "post-processors": [{
+      "output": "alfresco.box",
+      "type": "vagrant",
+      "keep_input_artifact": true
+    }],
+    "variables": {
+        "hostname": "packer-test",
+        "source_ami": "ami-234ecc54",
+        "ami_name": "sync-alfresco-{{timestamp}}",
+        "ami_description": "",
+        "ami_region": "eu-west-1",
+        "aws_access_key": "",
+        "aws_secret_key": "",
+        "ssh_key": "",
+        "alfresco-version": "",
+        "installer_file": "alfresco-enterprise-{{user `alfresco-version`}}-installer-linux-x64.bin",
+        "sync_zip_path": "../../distribution/target/sync-dist-5.x.zip",
+        "activemq_zip_path": "../../distribution/target/activemq.tar.gz",
+        "license_path": ""
+    }
+}

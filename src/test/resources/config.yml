@@ -1,0 +1,183 @@
+springContextFileLocation: spring.xml
+version: ${project.version} (${buildNumber})
+
+events:
+    # in ms (14 days)
+    staleSyncPeriod: 1209600000
+
+subscribers:
+    mongo:
+        subscribersCollectionName: subscribers
+        subscriptionsCollectionName: subscriptions
+        changesCollectionName: changes
+        nodesCollectionName: nodes
+        syncResults:
+            collectionName: syncResults
+            maxCollectionSize: 1000000
+            maxDocuments: 100000
+
+changes:
+    stats:
+        peakChangesWindowSize: 1000
+    eventCleanupNumThreads: 5
+    eventCleanupBatchSize: 1000
+
+akka:
+    numGetChangesActors: 10
+    numClearChangesActors: 10
+
+sync:
+    camel:
+        endpoint:
+            changes:
+                response: amqp1:queue:alfresco.sync.changes.response
+                request: amqp1:queue:alfresco.sync.changes.request
+                clear: amqp1:queue:alfresco.sync.changes.clear
+
+# ActiveMQ broker url
+messaging:
+    dataFormat: defaultDataFormat
+    txnManager: camelRequiredTxn
+    txnManager1: camelRequiredTxn1
+    nodeEvents:
+        numThreads: 1
+    getChanges:
+        numConcurrentConsumers: 5
+        maxConcurrentConsumers: 20
+    clearChanges:
+        numConcurrentConsumers: 5
+        maxConcurrentConsumers: 20
+    broker:
+        url: failover:(tcp://localhost:61616?wireFormat.maxInactivityDurationInitalDelay=30000)?timeout=3000
+        url1: failover:(tcp://localhost:61616?wireFormat.maxInactivityDurationInitalDelay=30000)?timeout=3000
+    events:
+        repo:
+            node:
+                sourceTopic:
+                    endpoint: activemq101:topic:alfresco.repo.events.nodes
+    clientId: subscription1
+    durableSubscriptionName: subscription1
+
+# Mongo persistence config
+mongo:
+    dbName: alfresco
+    mongoURI: mongodb://127.0.0.1:27017
+    enabled: true
+
+# SQL persistence config
+sql:
+    #
+    # Manually control how the system handles maximum string lengths.
+    # Any zero or negative value is ignored.
+    # Only change this after consulting support or reading the appropriate Javadocs for
+    # org.alfresco.repo.domain.schema.SchemaBootstrap for V2.1.2
+    maximumStringLength: -1
+    #
+    # Limit hibernate session size by trying to amalgamate events for the L2 session invalidation
+    # - hibernate works as is up to this size 
+    # - after the limit is hit events that can be grouped invalidate the L2 cache by type and not instance
+    # events may not group if there are post action listener registered (this is not the case with the default distribution)
+    hibernateMaxExecutions: 20000
+    db:
+        schema:
+            name: null
+            stopAfterSchemaBootstrap: null
+            update:
+                flag: true
+                lockRetryCount: 24
+                lockRetryWaitSeconds: 5
+        driver: org.postgresql.Driver
+        url: jdbc:postgresql:alfresco
+        username: alfresco
+        password: alfresco
+        pool:
+            initial: 255
+            max: 400
+            statements:
+                enable: true
+                max: 400
+            min: 10
+            idle: 10
+            wait:
+                max: -1
+            validate:
+                query:
+                borrow: true
+                return: false
+            evict:
+                interval: 600000
+                idle:
+                    min: 1800000
+                #
+                # note: for 'db.pool.evict.num.tests' see http://commons.apache.org/dbcp/configuration.html (numTestsPerEvictionRun)
+                #       and also following extract from "org.apache.commons.pool.impl.GenericKeyedObjectPool" (1.5.5)
+                #
+                #       * The number of objects to examine during each run of the idle object evictor thread (if any).
+                #       * When a negative value is supplied, <code>ceil({@link #getNumIdle})/abs({@link #getNumTestsPerEvictionRun})</code>
+                #       * tests will be run.  I.e., when the value is <code>-n</code>, roughly one <code>n</code>th of the
+                #       * idle objects will be tested per run.
+                #
+                num:
+                    tests: 1
+                validate: false
+            abandoned:
+                detect: false
+                time: 300
+                #
+                # db.pool.abandoned.log=true (logAbandoned) adds overhead (http://commons.apache.org/dbcp/configuration.html)
+                # and also requires db.pool.abandoned.detect=true (removeAbandoned)
+                #
+                log: false
+        txn:
+            isolation: -1
+
+server:
+    type: simple
+    applicationContextPath: /
+    connector:
+        type: http
+        port: 9092
+
+transaction:
+    mode:
+        readOnly: PROPAGATION_REQUIRED, readOnly
+        default: PROPAGATION_REQUIRED
+
+hibernate:
+    jdbc:
+        use_streams_for_binary: true
+    show_sql: false
+    cache:
+        use_query_cache: false
+    max_fetch_depth: 10
+    cache:
+        provider_class:
+        use_second_level_cache: false
+    default_batch_fetch_size: 1
+    jdbc.batch_size: 32
+    connection:
+        release_mode: auto
+        isolation: 2
+
+monitor:
+    userCounts:
+        # ms
+        expiryTime: 3600000
+
+logging:
+  level: INFO
+  loggers:
+    "org.apache.activemq": WARN
+  appenders:
+    - type: console
+      threshold: ALL
+      timeZone: UTC
+      target: stdout
+      logFormat: "%-5level [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] %logger - %msg%n"
+    - type: file
+      threshold: ALL
+      currentLogFilename: ./logs/service-subscription.log
+      archive: true
+      archivedLogFilenamePattern: ./logs/service-subscription-%d.log.gz
+      archivedFileCount: 5
+      logFormat: "%-5level [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] %logger - %msg%n"

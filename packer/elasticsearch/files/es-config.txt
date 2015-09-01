@@ -1,0 +1,20 @@
+entities.extract: false
+entities.extracter.type: StanfordNLP
+
+broker.url: tcp://localhost:61616
+broker.nodes.sourceTopic: activemq:topic:alfresco.repo.events.nodes
+#broker.sourceTopic: activemq:topic:alfresco.events.repo.nodes
+broker.nodes.clientId: alfresco.elasticsearch.plugin.nodes
+broker.nodes.durableSubscriptionName: alfresco.elasticsearch.plugin.nodes
+broker.alfresco.monitoring.sourceTopic: activemq:topic:alfresco.monitoring
+broker.alfresco.monitoring.clientId: alfresco.elasticsearch.plugin.monitoring
+broker.alfresco.monitoring.durableSubscriptionName: alfresco.elasticsearch.plugin.monitoring
+
+repo.sslKeyStoreLocation: classpath:ssl.repo.client.keystore
+repo.ssltrustStoreLocation: classpath:ssl.repo.client.truststore
+repo.sslKeyStoreType: JCEKS
+repo.sslTrustStoreType: JCEKS
+repo.sslKeyStorePasswordFileLocation: classpath:ssl-keystore-passwords.properties
+repo.sslTrustStorePasswordFileLocation: classpath:ssl-truststore-passwords.properties
+
+path.repo: ["/data/elasticsearch/backups"]

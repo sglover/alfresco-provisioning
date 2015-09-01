@@ -1,0 +1,230 @@
+aws:
+  - name: bmserveraws
+    ec2name: <%= AWS_NAME_PREFIX %>bmserveraws
+    ami: ami-3a1a464d
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: gp2
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    shell_provisioners:
+      - path: bmserverupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> sync1 <%= AWS_NAME_PREFIX %>alfaws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>bmserveraws
+  - name: bmdriver1aws
+    ec2name: <%= AWS_NAME_PREFIX %>bmdriver1aws
+    ami: ami-2e194559
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: gp2
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    file_provisioners:
+      - source: cache/alfresco-benchmark-tests-device-sync-1.0-SNAPSHOT.war
+        destination: /data/alfresco/alfresco-benchmark-tests-device-sync-1.0-SNAPSHOT.war
+    shell_provisioners:
+      - path: bmdriverupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver1aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws yes
+  - name: bmdriver2aws
+    ec2name: <%= AWS_NAME_PREFIX %>bmdriver2aws
+    ami: ami-2e194559
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: gp2
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    file_provisioners:
+      - source: cache/alfresco-benchmark-tests-device-sync-1.0-SNAPSHOT.war
+        destination: /data/alfresco/alfresco-benchmark-tests-device-sync-1.0-SNAPSHOT.war
+    shell_provisioners:
+      - path: bmdriverupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver2aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no
+  - name: bmdriver3aws
+    ec2name: <%= AWS_NAME_PREFIX %>bmdriver3aws
+    ami: ami-2e194559
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: gp2
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    shell_provisioners:
+      - path: bmdriverupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver3aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no
+  - name: bmdriver4aws
+    ec2name: <%= AWS_NAME_PREFIX %>bmdriver4aws
+    ami: ami-2e194559
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: gp2
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    shell_provisioners:
+      - path: bmdriverupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver4aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no
+  - name: alf4.2.4syncaws
+    ec2name: <%= AWS_NAME_PREFIX %>alf4.2.4syncaws
+    ami: ami-0f8aff78
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: gp2
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+  - name: alfaws
+    ec2name: <%= AWS_NAME_PREFIX %>alfaws
+    ami: ami-6cbde21b
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: io1
+    iops: 250
+    volume_size: 40
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    shell_provisioners:
+      - path: repoupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>syncaws
+  - name: alf2aws
+    ec2name: <%= AWS_NAME_PREFIX %>alf2aws
+    ami: ami-5291c425
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: io1
+    iops: 250
+    volume_size: 40
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    shell_provisioners:
+      - path: repoupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>syncaws
+  - name: alf3aws
+    ec2name: <%= AWS_NAME_PREFIX %>alf3aws
+    ami: ami-5291c425
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: io1
+    iops: 250
+    volume_size: 40
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    shell_provisioners:
+      - path: repoupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>syncaws
+  - name: alf424aws
+    ec2name: <%= AWS_NAME_PREFIX %>alfaws
+    ami: ami-fce2af8b
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: io1
+    iops: 250
+    volume_size: 40
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    shell_provisioners:
+      - path: repoupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>syncaws
+  - name: testaws
+    ec2name: <%= AWS_NAME_PREFIX %>testaws
+    ami: ami-234ecc54
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: gp2
+    volume_size: 10
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+  - name: syncaws
+    ec2name: <%= AWS_NAME_PREFIX %>syncaws
+    ami: ami-e186dc96
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: gp2
+    volume_size: 70
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    shell_provisioners:
+      - path: syncupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>alfaws remote
+  - name: servicesaws
+    ec2name: <%= AWS_NAME_PREFIX %>servicesaws
+    ami: ami-c25708b5
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: io1
+    volume_size: 100
+    iops: 240
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    shell_provisioners:
+      - path: servicesupdate.sh
+  - name: cassandraaws
+    ec2name: <%= AWS_NAME_PREFIX %>cassandraaws
+    ami: ami-234ecc54
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: io1
+    iops: 250
+    volume_size: 30
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    shell_provisioners:
+      - path: cassandrainstall.sh
+  - name: esaws
+    ec2name: <%= AWS_NAME_PREFIX %>esaws
+    ami: ami-6aebb81d
+    instance_type: m3.2xlarge
+    region: eu-west-1
+    volume_type: gp2
+    volume_size: 30
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    file_provisioners:
+      - source: cache/alfresco-elasticsearch-plugin-1.0-SNAPSHOT.zip
+        destination: /home/ubuntu/alfresco-elasticsearch-plugin-1.0-SNAPSHOT.zip
+    shell_provisioners:
+      - path: esupdate.sh
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws
+docker:
+  - name: docker1
+    image: docker

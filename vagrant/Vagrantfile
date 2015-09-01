@@ -1,0 +1,105 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+require 'yaml'
+require 'erb'
+
+AWS_ACCESS_KEY=ENV['AWS_ACCESS_KEY']
+AWS_SECRET=ENV['AWS_SECRET_KEY']
+AWS_KEYPAIR_PATH=ENV['AWS_KEYPAIR_PATH']
+AWS_KEYPAIR_NAME=ENV['AWS_KEYPAIR_NAME']
+AWS_NAME_PREFIX=ENV['AWS_NAME_PREFIX']
+
+servers = YAML.load(ERB.new(File.read("servers.yml")).result)
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure(2) do |config|
+
+  servers["aws"].each do |servers|
+
+    config.vm.define servers["name"] do |srv|
+
+       srv.vm.box = servers["box"]
+   
+       # The url from where the box will be fetched if it
+       # doesn't already exist on the user's system.
+       #alfresco.vm.box_url = AWS_BOX_URL
+   
+       srv.vm.synced_folder ".", "/vagrant", disabled: true
+
+       srv.vm.provider :aws do |aws, override|
+         
+         aws.access_key_id = servers["aws_access_key"]
+         aws.secret_access_key = servers["aws_secret_key"]
+   
+         aws.keypair_name = servers["aws_keypair_name"]
+   
+         aws.ami = servers["ami"]
+         aws.instance_type = servers["instance_type"]
+         aws.region = servers["region"]
+         #aws.availability_zone = "us-east-1a"
+         #aws.private_ip_address = "10.0.0.101"
+         #aws.subnet_id = "subnet-25df8544" 
+         #aws.elastic_ip = true
+   
+         aws.security_groups = ["Sync-01"]
+
+         aws.tags = {
+            'InstanceType' => "Sync",
+            'SyncBaseName' => "Sync",
+            'Name' => servers["ec2name"]
+         }
+
+         if servers["volume_type"] == 'gp2'
+             aws.block_device_mapping = [{
+                'DeviceName' => '/dev/sdb',
+                'Ebs.VolumeSize' => servers["volume_size"],
+                'Ebs.VolumeType' => servers["volume_type"],
+                'Ebs.DeleteOnTermination' => 'true'
+             }]
+         elsif servers["volume_type"] == 'io1'
+             aws.block_device_mapping = [{
+                'DeviceName' => '/dev/sdb',
+                'Ebs.VolumeSize' => servers["volume_size"],
+                'Ebs.VolumeType' => servers["volume_type"],
+                'Ebs.Iops' => servers["iops"],
+                'Ebs.DeleteOnTermination' => 'true'
+             }]
+         else
+
+         end
+
+         override.ssh.username = "ubuntu"
+         override.ssh.private_key_path = servers["aws_keypair_path"]
+       end
+
+       unless servers["file_provisioners"].nil?
+         servers["file_provisioners"].each do |pr|
+            srv.vm.provision "file", source: pr["source"], destination: pr["destination"]
+         end
+       end
+
+       unless servers["shell_provisioners"].nil?
+         servers["shell_provisioners"].each do |pr|
+           srv.vm.provision "shell" do |s|
+              s.path = pr["path"]
+              s.args = pr["args"]
+           end
+         end
+       end
+    end
+  end
+
+  servers["docker"].each do |dockers|
+
+    config.vm.define dockers["name"] do |srv|
+
+       srv.vm.provider :docker do |docker, override|
+          docker.image = dockers["image"]
+       end
+
+    end
+  end
+end

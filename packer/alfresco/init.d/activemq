@@ -1,0 +1,4 @@
+#!/bin/bash
+# chkconfig: 2345 80 20
+cd /data/alfresco/activemq
+/bin/su activemq -c "bin/activemq $@"

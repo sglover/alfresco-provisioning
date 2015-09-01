@@ -1,0 +1,132 @@
+#!/bin/bash
+# chkconfig: 2345 91 9
+# description: Alfresco Desktop Sync Subscription Service
+### BEGIN INIT INFO
+# Provides: Alfresco Desktop Sync Subscription Service
+# Required-Start: $local_fs $network $mongod $activemq
+# Required-Stop: $local_fs $network $mongod $activemq
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Description: Start the program
+### END INIT INFO
+
+### Fill in these bits:
+
+USER="desktop_sync"
+SUBS_LOCATION=/data/alfresco/alfresco-sync/service-subscription
+PID_FILE="/var/run/desktop_sync/service-subscription.pid"
+SUBS_VERSION=1.1-SNAPSHOT
+SUBS_JAR=service-subscription-dropwizard-$SUBS_VERSION.jar
+
+START_CMD="\"cd $SUBS_LOCATION;java -XX:MaxPermSize=1024m -Xms256M -Xmx4G -agentpath:/data/alfresco/yourkit/yourkit/libyjpagent.so=onexit=snapshot,dir=/data/alfresco/yourkit/snapshots,probe_off=*,probe_on=com.yourkit.probes.builtin.Databases -Djava.io.tmpdir=/data/alfresco/alfresco-sync/tmp -jar $SUBS_JAR server config.yml > /dev/null 2>&1 &\""
+NAME="alfresco-service-subs"
+PGREP_STRING="$SUBS_JAR"
+
+### No Changes required below this point!
+
+CUR_USER=`whoami`
+
+killproc() {
+  pkill -u $USER -f $PGREP_STRING
+}
+
+start_daemon() {
+  eval "$*"
+}
+
+log_success_msg() {
+  echo "$*"
+  logger "$_"
+}
+
+log_failure_msg() {
+  echo "$*"
+  logger "$_"
+}
+
+check_proc() {
+  pgrep -u $USER -f $PGREP_STRING >/dev/null
+}
+
+start_script() {
+  check_proc
+  if [ $? -eq 0 ]; then
+    log_success_msg "$NAME is already running."
+    exit 0
+  fi
+
+  [ -d /var/run/$NAME ] || (mkdir /var/run/$NAME )
+
+  # For SELinux we need to use 'runuser' not 'su'
+  if [ -x "/sbin/runuser" ]; then
+     SU="/sbin/runuser -s /bin/sh"
+  else
+     SU="/bin/su -s /bin/sh"
+  fi
+  start_daemon sudo $SU $USER -c "$START_CMD"
+
+  # Sleep for a while to see if anything cries
+  sleep 5
+  check_proc
+
+  if [ $? -eq 0 ]; then
+    log_success_msg "Started $NAME."
+  else
+    log_failure_msg "Error starting $NAME."
+    exit -1
+  fi
+}
+
+stop_script() {
+  check_proc
+  if [ $? -eq 0 ]; then
+    killproc -p $PID_FILE >/dev/null
+
+    # Make sure it's dead before we return
+    until [ $? -ne 0 ]; do
+      sleep 1
+      check_proc
+    done
+
+    check_proc
+    if [ $? -eq 0 ]; then
+      log_failure_msg "Error stopping $NAME."
+      exit -1
+    else
+      log_success_msg "Stopped $NAME."
+    fi
+  else
+    log_failure_msg "$NAME is not running or you don't have permission to stop it"
+  fi
+}
+
+check_status() {
+  check_proc
+  if [ $? -eq 0 ]; then
+    log_success_msg "$NAME is running."
+  else
+    log_failure_msg "$NAME is stopped."
+    exit -1
+  fi
+}
+
+case "$1" in
+  start)
+    start_script
+    ;;
+  stop)
+    stop_script
+    ;;
+  restart)
+    stop_script
+    start_script
+    ;;
+  status)
+    check_status
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    exit 1
+esac
+
+exit 0
