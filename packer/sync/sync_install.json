@@ -13,15 +13,16 @@
         "ami_block_device_mappings": [
         {
             "device_name": "/dev/sda1",
-            "volume_size": 100,
+            "volume_size": 40,
             "volume_type": "gp2",
             "delete_on_termination": true
         },
         {
             "device_name": "/dev/sdb",
-            "volume_size": 70,
-            "volume_type": "gp2",
-            "delete_on_termination": true
+            "delete_on_termination": true,
+            "volume_size": 100,
+            "volume_type": "io1",
+            "iops": 240
         },
         {
             "device_name": "/dev/sdc",
@@ -36,9 +37,10 @@
         },
         {
             "device_name": "/dev/sdb",
-            "volume_size": 70,
-            "volume_type": "gp2",
-            "delete_on_termination": true
+            "delete_on_termination": true,
+            "volume_size": 100,
+            "volume_type": "io1",
+            "iops": 240
         },
         {
             "device_name": "/dev/sdc",
@@ -87,7 +89,8 @@
         "image": "ubuntu",
         "commit": true
     }],
-    "provisioners": [{
+    "provisioners": [
+    {
         "type": "shell",
         "inline": [
             "mkdir /tmp/init.d /tmp/cron.d /tmp/licenses"
@@ -145,37 +148,12 @@
     },
     {
         "type": "file",
-        "source": "../../target/service-sync-bundle-1.1-SNAPSHOT.jar",
-        "destination": "/data/alfresco/service-sync-bundle-1.1-SNAPSHOT.jar"
-    },
-    {
-        "type": "shell",
-        "scripts": [
-            "prepare-users.sh"
-        ],
-        "only": [ "virtualbox-iso" ],
-        "override": {
-            "virtualbox-iso": {
-                "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
-            }
-        }
+        "source": "../../target/alfresco-provisioning-1.0-SNAPSHOT.jar",
+        "destination": "/data/alfresco/alfresco-provisioning-1.0-SNAPSHOT.jar"
     },
     {
         "type": "shell",
         "script": "prepare-packages.sh",
-        "override": {
-            "virtualbox-iso": {
-                "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
-            }
-        }
-    },
-    {
-        "type": "shell",
-        "inline": [
-            "sudo sed -i -e \"s@# deb http://extras.ubuntu.com/ubuntu trusty main@deb http://extras.ubuntu.com/ubuntu trusty main@\" /etc/apt/sources.list",
-            "sudo sed -i -e \"s@# deb http://archive.canonical.com/ubuntu trusty partner@deb http://archive.canonical.com/ubuntu trusty partner@\" /etc/apt/sources.list"
-        ],
-        "only": [ "virtualbox-iso" ],
         "override": {
             "virtualbox-iso": {
                 "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
@@ -196,30 +174,9 @@
     },
     {
         "type": "shell",
-        "inline": [
-            "echo \"deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main\" | sudo tee -a /etc/apt/sources.list.d/pgdg.list",
-            "wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -",
-            "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10",
-            "add-apt-repository -y ppa:webupd8team/java",
-            "echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections",
-            "apt-get update",
-            "apt-get -q -y install unzip linux-image-generic-lts-raring linux-headers-generic-lts-raring build-essential dkms zlib1g-dev libssl-dev libreadline6-dev libyaml-dev curl wget git-core gcc g++ make autoconf python-software-properties screen puppet puppetmaster oracle-java8-installer postgresql-9.4 htop postgresql-client sys-stat",
-            "ln -s /usr/lib/jvm/java-8-oracle /usr/lib/jvm/default-java"
-        ],
-        "only": [ "virtualbox-iso" ],
-        "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
-    },
-    {
-        "type": "shell",
         "script": "files/sync-install.sh",
         "only": [ "amazon-ebs" ],
         "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
-    },
-    {
-        "type": "shell",
-        "script": "prepare-vboxguestadditions.sh",
-        "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'",
-        "only": [ "virtualbox-iso" ]
     }],
     "post-processors": [{
       "output": "sync.box",

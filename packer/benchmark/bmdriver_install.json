@@ -66,8 +66,8 @@
     },
     {
         "type": "file",
-        "source": "../../target/service-sync-bundle-1.1-SNAPSHOT.jar",
-        "destination": "/data/alfresco/service-sync-bundle-1.1-SNAPSHOT.jar"
+        "source": "../../target/alfresco-provisioning-1.0-SNAPSHOT.jar",
+        "destination": "/data/alfresco/alfresco-provisioning-1.0-SNAPSHOT.jar"
     },
     {
         "type": "file",

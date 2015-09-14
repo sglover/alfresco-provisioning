@@ -9,7 +9,7 @@ DEBUG=""
 
 BUILDNAMES="amazon-ebs,virtualbox-iso"
 
-PACKER_BIN="/usr/local/packer/packer"
+PACKER_BIN=`which packer`
 
 DELIVERY_SERVER="pbam01.alfresco.com"
 DELIVERY_USER="tomcat"
@@ -54,14 +54,6 @@ while [ "$1" != "" ]; do
         -ldap )
                 shift
                 CREDENTIALS=$1
-                ;;
-        -key )  
-                shift
-                AWS_ACCESS_KEY=$1
-                ;;
-        -secret)
-                shift
-                AWS_SECRET_KEY=$1
                 ;;
         -tmpdir )
                 shift

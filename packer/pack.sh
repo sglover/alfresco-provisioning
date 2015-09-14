@@ -9,12 +9,13 @@ CACHEDIR="$PWD/packaging/packer/cache"
 ALFRESCO_DIR="$PWD/alfresco"
 AMI_NAME_PREFIX="sync"
 AMI_NAME_SUFFIX="$USER-$(date +'%s')"
+ACTIVEMQ_VERSION=5.11.2
 
 DEBUG=""
 
 BUILDNAMES="amazon-ebs,virtualbox-iso"
 
-PACKER_BIN="/usr/local/packer/packer"
+PACKER_BIN=`which packer`
 
 DELIVERY_SERVER="pbam01.alfresco.com"
 DELIVERY_USER="tomcat"
@@ -91,14 +92,14 @@ while [ "$1" != "" ]; do
                 BAMBOO_BUILD_NUMBER=$1
                 AMI_NAME_SUFFIX="build-$BAMBOO_BUILD_NUMBER"
                 ;;
-        -key )  
-                shift
-                AWS_ACCESS_KEY=$1
-                ;;
-        -secret)
-                shift
-                AWS_SECRET_KEY=$1
-                ;;
+#        -key )  
+#                shift
+#                AWS_ACCESS_KEY=$1
+#                ;;
+#        -secret)
+#                shift
+#                AWS_SECRET_KEY=$1
+#                ;;
         -dbtype )
                 shift
                 SYNC_DBTYPE=$1
@@ -251,7 +252,7 @@ getActiveMQ() {
     if [ -f $CACHEDIR/activemq.tar.gz ]; then
         echo "found: ActiveMQ zip"
     else
-        URL="https://repository.apache.org/content/repositories/snapshots/org/apache/activemq/apache-activemq/5.9-SNAPSHOT/apache-activemq-5.9-20131010.203434-114-bin.tar.gz"
+        URL="https://repository.apache.org/content/repositories/releases/org/apache/activemq/apache-activemq/${ACTIVEMQ_VERSION}/apache-activemq-${ACTIVEMQ_VERSION}-bin.tar.gz"
         echo "Fetching ActiveMQ dist from url $URL..."
         curl --fail --retry 5 $URL -o $CACHEDIR/activemq.tar.gz
     fi

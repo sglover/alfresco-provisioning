@@ -54,6 +54,6 @@ sed -i -e "s/#temp_buffers = 8MB/temp_buffers = 8MB/" /data/alfresco/alfresco-${
 sed -i -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /data/alfresco/alfresco-${ALF_VERSION}/alf_data/postgresql/postgresql.conf
 #echo "hostssl all             all             109.146.214.125/32      password" | sudo tee -a /data/alfresco/alfresco-${ALF_VERSION}/alf_data/postgresql/pg_hba.conf
 
-mkdir -p /data/alfresco/alfresco-${ALF_VERSION}/shared/classes/alfresco/extension/license
-echo "Copying license /tmp/alfresco-license.lic to /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco/extension/licenses"
+echo "Copying license /tmp/alfresco-license.lic to /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco/extension/license"
+mkdir -p /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco/extension/license
 cp /tmp/alfresco-license.lic /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco/extension/license

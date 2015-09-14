@@ -25,7 +25,7 @@ YOUR_KIT_OPTS="-agentpath:/data/alfresco/yourkit/libyjpagent.so=onexit=snapshot,
 # ActiveMQ
 
 tar zxf /tmp/activemq.tar.gz -C /data/alfresco
-mv /data/alfresco/apache-activemq-5.11.1 /data/alfresco/activemq
+mv /data/alfresco/apache-activemq-5.11.2 /data/alfresco/activemq
 chmod a+x /data/alfresco/activemq
 chown -R activemq:activemq /data/alfresco/activemq
 echo "" | sudo tee -a /data/alfresco/activemq/conf/log4j.properties
@@ -40,3 +40,7 @@ echo "log4j.logger.org.apache.activemq.store.kahadb.MessageDatabase=TRACE, kahad
 chmod +x /tmp/init.d/*
 cp /tmp/init.d/* /etc/init.d
 update-rc.d activemq defaults
+
+# sysstat
+sed -i -e "s/ENABLED=\"false\"/ENABLED=\"true\"/" /etc/default/sysstat
+sed -i -e "s#5-55/10#*/1#" /etc/cron.d/sysstat

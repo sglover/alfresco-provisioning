@@ -2,7 +2,9 @@
 
 cd /home/ubuntu
 
-export SERVICES_IP=`java -jar service-sync-bundle-1.1-SNAPSHOT.jar -hostname $1 $2 $3`
+JARNAME="alfresco-provisioning-1.0-SNAPSHOT.jar"
+
+export SERVICES_IP=`java -jar $JARNAME -hostname $1 $2 $3`
 echo "Services hostname is $SERVICES_IP"
 
 sed -i -e "s@\(broker.url: tcp://\).*\(:61616\)@\1${SERVICES_IP}\2@" /etc/elasticsearch/elasticsearch.yml

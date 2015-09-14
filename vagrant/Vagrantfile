@@ -67,6 +67,7 @@ Vagrant.configure(2) do |config|
                 'Ebs.Iops' => servers["iops"],
                 'Ebs.DeleteOnTermination' => 'true'
              }]
+             aws.ebs_optimized = 'true'
          else
 
          end

@@ -26,7 +26,7 @@ echo "alfresco soft nofile 4096" >> /etc/security/limits.conf
 echo "alfresco hard nofile 65536" >> /etc/security/limits.conf
 
 tar zxf /tmp/activemq.tar.gz -C /data/alfresco
-mv /data/alfresco/apache-activemq-5.11.1 /data/alfresco/activemq
+mv /data/alfresco/apache-activemq-5.11.2 /data/alfresco/activemq
 chmod a+x /data/alfresco/activemq
 chown -R activemq:activemq /data/alfresco/activemq
 

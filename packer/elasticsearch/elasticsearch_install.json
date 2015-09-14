@@ -80,8 +80,8 @@
     },
     {
         "type": "file",
-        "source": "../../target/service-sync-bundle-1.1-SNAPSHOT.jar",
-        "destination": "/home/ubuntu/service-sync-bundle-1.1-SNAPSHOT.jar"
+        "source": "../../target/alfresco-provisioning-1.0-SNAPSHOT.jar",
+        "destination": "/home/ubuntu/alfresco-provisioning-1.0-SNAPSHOT.jar"
     },
     {
         "type": "file",
