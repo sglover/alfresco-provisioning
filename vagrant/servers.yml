@@ -29,7 +29,7 @@ aws:
         destination: /data/alfresco/alfresco-benchmark-tests-device-sync-1.0-SNAPSHOT.war
     shell_provisioners:
       - path: bmdriverupdate.sh
-        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver1aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws yes
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver1aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws yes services
   - name: bmdriver2aws
     ec2name: <%= AWS_NAME_PREFIX %>bmdriver2aws
     ami: ami-111f3c66
@@ -46,7 +46,7 @@ aws:
         destination: /data/alfresco/alfresco-benchmark-tests-device-sync-1.0-SNAPSHOT.war
     shell_provisioners:
       - path: bmdriverupdate.sh
-        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver2aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver2aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no services
   - name: bmdriver3aws
     ec2name: <%= AWS_NAME_PREFIX %>bmdriver3aws
     ami: ami-111f3c66
@@ -60,7 +60,7 @@ aws:
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
     shell_provisioners:
       - path: bmdriverupdate.sh
-        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver3aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver3aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no services
   - name: bmdriver4aws
     ec2name: <%= AWS_NAME_PREFIX %>bmdriver4aws
     ami: ami-111f3c66
@@ -74,7 +74,7 @@ aws:
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
     shell_provisioners:
       - path: bmdriverupdate.sh
-        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver4aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver4aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no services
   - name: alf4.2.4syncaws
     ec2name: <%= AWS_NAME_PREFIX %>alf4.2.4syncaws
     ami: ami-0f8aff78
@@ -101,7 +101,7 @@ aws:
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
     shell_provisioners:
       - path: repoupdate.sh
-        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>syncaws
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>syncaws services
   - name: alf2aws
     ec2name: <%= AWS_NAME_PREFIX %>alf2aws
     ami: ami-7b10330c
@@ -164,7 +164,7 @@ aws:
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
   - name: syncaws
     ec2name: <%= AWS_NAME_PREFIX %>syncaws
-    ami: ami-a71b38d0
+    ami: ami-e1604896
     instance_type: m3.2xlarge
     region: eu-west-1
     volume_type: io1
@@ -177,10 +177,10 @@ aws:
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
     shell_provisioners:
       - path: syncupdate.sh
-        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>alfaws local
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>alfaws remote
   - name: sync1aws
     ec2name: <%= AWS_NAME_PREFIX %>syncaws
-    ami: ami-353f1c42
+    ami: ami-e1604896
     instance_type: m3.2xlarge
     region: eu-west-1
     volume_type: io1
@@ -193,7 +193,7 @@ aws:
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
     shell_provisioners:
       - path: syncupdate.sh
-        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>alfaws local
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>alfaws remote
   - name: servicesaws
     ec2name: <%= AWS_NAME_PREFIX %>servicesaws
     ami: ami-c25708b5

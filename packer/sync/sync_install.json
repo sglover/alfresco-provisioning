@@ -133,16 +133,6 @@
     },
     {
         "type": "file",
-        "source": "init.d/alfresco-service-subs",
-        "destination": "/tmp/init.d/alfresco-service-subs"
-    },
-    {
-        "type": "file",
-        "source": "init.d/alfresco-service-sync",
-        "destination": "/tmp/init.d/alfresco-service-sync"
-    },
-    {
-        "type": "file",
         "source": "init.d/alfresco-sync",
         "destination": "/tmp/init.d/alfresco-sync"
     },

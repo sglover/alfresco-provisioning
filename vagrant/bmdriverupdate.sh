@@ -2,10 +2,14 @@
 
 JARNAME="alfresco-provisioning-1.0-SNAPSHOT.jar"
 
+ACTIVEMQ_BROKER_HOST_TYPE=${10}
+
+echo "ACTIVEMQ_BROKER_HOST_TYPE=$ACTIVEMQ_BROKER_HOST_TYPE"
+
 cd /data/alfresco
 
-#export SERVICES_IP=`java -jar $JARNAME -hostname $1 $2 $8`
-#echo "Services hostname is $SERVICES_IP"
+export SERVICES_IP=`java -jar $JARNAME -hostname $1 $2 $8`
+echo "Services hostname is $SERVICES_IP"
 
 export BM_SERVER_IP=`java -jar $JARNAME -hostname $1 $2 $3`
 echo "BM server hostname is $BM_SERVER_IP"
@@ -25,8 +29,24 @@ chown -R tomcat7:tomcat7 /tmp/tomcat7
 chown -R tomcat7:tomcat7 /var/lib/tomcat7
 #chown -R tomcat7:tomcat7 /home/ubuntu/snapshots
 
+if [[ $ACTIVEMQ_BROKER_HOST_TYPE == "services" ]]; then
+    MESSAGING_IP=$SERVICES_IP
+    echo "Services host messaging - IP $MESSAGING_IP"
+elif [[ $ACTIVEMQ_BROKER_HOST_TYPE == "sync" ]]; then
+    MESSAGING_IP=$SYNC_IP
+    echo "Sync host messaging - IP $SYNC_IP"
+else
+    echo "Invalid messaging host type (expected services or sync)"
+    exit 1
+fi
+
+echo "Set ActiveMQ broker URL to failover:(tcp://${MESSAGING_IP}:61616?connectionTimeout=5000)?timeout=500&maxReconnectAttempts=5&maxReconnectDelay=500"
+echo "JAVA_OPTS=\"\$JAVA_OPTS -Dmirror.name=$7 -Dmessaging.broker.url=tcp://${MESSAGING_IP}:61616 -DalfrescoHost=${ALFRESCO_IP} -Dmongo.config.host=$BM_SERVER_IP\"" | sudo tee -a /usr/share/tomcat7/bin/setenv.sh
+#java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml messaging.broker.url "failover:(tcp://${MESSAGING_IP}:61616?connectionTimeout=5000)?timeout=500&maxReconnectAttempts=5&maxReconnectDelay=500"
+
 #echo "JAVA_OPTS=\"\$JAVA_OPTS -Dmirror.name=$7 -Dmessaging.broker.url=tcp://${SERVICES_IP}:61616 -DalfrescoHost=${ALFRESCO_IP} -Dmongo.config.host=$BM_SERVER_IP\"" | sudo tee -a /usr/share/tomcat7/bin/setenv.sh
-echo "JAVA_OPTS=\"-Dmirror.name=$7 -Dmessaging.broker.url=tcp://${SYNC_IP}:61616 -DalfrescoHost=${ALFRESCO_IP} -Dmongo.config.host=$BM_SERVER_IP\"" | sudo tee -a /usr/share/tomcat7/bin/setenv.sh
+#echo "JAVA_OPTS=\"-Dmirror.name=$7 -Dmessaging.broker.url=tcp://${SYNC_IP}:61616 -DalfrescoHost=${ALFRESCO_IP} -Dmongo.config.host=$BM_SERVER_IP\"" | sudo tee -a /usr/share/tomcat7/bin/setenv.sh
+
 echo "CATALINA_TMPDIR=\"/tmp/tomcat7\"" | sudo tee -a /usr/share/tomcat7/bin/setenv.sh
 /etc/init.d/tomcat7 restart
 
@@ -63,14 +83,13 @@ java -jar $JARNAME -setBMProperty $BM_SERVER_IP CMIS "cmis.host" ${ALFRESCO_IP}
 java -jar $JARNAME -setBMProperty $BM_SERVER_IP CMIS "cmis.port" 8080
 
 echo "Updating sync server name"
-java -jar $JARNAME -setBMProperty $BM_SERVER_IP DeviceSync "subs.server" ${SYNC_IP}
 java -jar $JARNAME -setBMProperty $BM_SERVER_IP DeviceSync "sync.server" ${SYNC_IP}
 
 echo "Updating ActiveMQ hostname"
 #java -jar $JARNAME -setBMProperty $BM_SERVER_IP DeviceSync "activemq.host" ${SERVICES_IP}
 #java -jar $JARNAME -setBMProperty $BM_SERVER_IP DeviceSync "activemq.host" ${SERVICES_IP}
-java -jar $JARNAME -setBMProperty $BM_SERVER_IP DeviceSync "activemq.host" ${SYNC_IP}
-java -jar $JARNAME -setBMProperty $BM_SERVER_IP DeviceSync "activemq.host" ${SYNC_IP}
+java -jar $JARNAME -setBMProperty $BM_SERVER_IP DeviceSync "activemq.host" ${MESSAGING_IP}
+#java -jar $JARNAME -setBMProperty $BM_SERVER_IP DeviceSync "activemq.host" ${MESSAGING_IP}
 
 echo "Updating Mongo hostname"
 java -jar $JARNAME -setBMProperty $BM_SERVER_IP DeviceSync "mongo.test.host" ${BM_SERVER_IP}
