@@ -60,7 +60,7 @@ public class JMXService
 	{
 		StringBuilder sb = new StringBuilder("failover:(tcp://");
 		sb.append(brokerHostname);
-		sb.append(":61616)?timeout=3000");
+		sb.append(":61616)?timeout=3000&jms.useCompression=true");
 		String brokerUri = sb.toString();
 
 		ObjectName objectName = new ObjectName("Alfresco:Category=Messaging,Type=Configuration,id1=default");
