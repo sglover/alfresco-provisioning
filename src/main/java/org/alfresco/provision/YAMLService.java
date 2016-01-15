@@ -46,7 +46,8 @@ public class YAMLService
                 }
                 else
                 {
-                    throw new IllegalArgumentException();
+                    System.err.println("Error updating key " + key + " with value " + value);
+                    throw new IllegalArgumentException("Error updating key " + key + " with value " + value);
                 }
             }
             if(!(o instanceof Map))

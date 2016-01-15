@@ -17,8 +17,7 @@ cp /tmp/alfresco-benchmark-server.war /var/lib/tomcat7/webapps/alfresco-benchmar
 mkdir -p /data/mongo/data
 mkdir -p /data/mongo/logs
 chown -R mongodb:mongodb /data/mongo
-#/etc/init.d/tomcat7 restart
-sed -i 's@bind_ip = 127.0.0.1@#bind_ip = 127.0.0.1@' /etc/mongod.conf
-sed -i 's@dbpath=/var/lib/mongodb@dbpath=/data/mongo/data@' /etc/mongod.conf
-sed -i 's@logpath=/var/log/mongodb/mongod.log@logpath=/data/mongo/logs/mongod.log@' /etc/mongod.conf
-#service mongod restart
+
+sed -i 's@bindIp: 127.0.0.1@#bindIp: 127.0.0.1@' /etc/mongod.conf
+sed -i 's@dbPath: /var/lib/mongodb@dbPath: /data/mongo/data@' /etc/mongod.conf
+sed -i 's@path: /var/log/mongodb/mongod.log@path: /data/mongo/logs/mongod.log@' /etc/mongod.conf

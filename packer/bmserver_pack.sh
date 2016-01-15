@@ -18,7 +18,7 @@ PACKER_BIN=`which packer`
 DELIVERY_SERVER="pbam01.alfresco.com"
 DELIVERY_USER="tomcat"
 
-BMSERVER_VER="2.0.9"
+BMSERVER_VER="2.0.10"
 
 bamboo=https://bamboo.alfresco.com/bamboo/browse
 

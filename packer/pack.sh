@@ -161,11 +161,16 @@ getAlfrescoInstaller() {
 #            echo "Fetching Alfresco $1 Installer from url $URL..."
 #            curl -u $CREDENTIALS --fail --retry 5 $URL -o $CACHEDIR/alfresco-enterprise-$ALFRESCO_VERSION-installer-linux-x64.bin
 #        else
+#        if [ "$ALFRESCO_VERSION_MAJOR" = "5.1" ]; then
+#            URL="http://bamboo.alfresco.com/bamboo/browse/ALF-EPACK-${ALFRESCO_BUILD}/artifact/JOB1/ALL/alfresco-enterprise-installer-20150930-SNAPSHOT-357-linux-x64.bin"
+#            echo "Fetching Alfresco $1 Installer from url $URL..."
+#            curl -u $CREDENTIALS --fail --retry 5 $URL -o $CACHEDIR/alfresco-enterprise-$ALFRESCO_VERSION-installer-linux-x64.bin
+#        else
             URL="https://releases.alfresco.com/Enterprise-$ALFRESCO_VERSION_MAJOR/$ALFRESCO_VERSION/build-$ALFRESCO_BUILD/ALL/alfresco-enterprise-$ALFRESCO_VERSION-installer-linux-x64.bin"
             echo "Fetching Alfresco $1 Installer from url $URL..."
             curl -u $CREDENTIALS --fail --retry 5 $URL -o $CACHEDIR/alfresco-enterprise-$ALFRESCO_VERSION-installer-linux-x64.bin
-#        fi
-    fi
+        fi
+#    fi
 }
 
 getAlfrescoLicense() {

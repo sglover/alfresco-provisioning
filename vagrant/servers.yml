@@ -1,7 +1,7 @@
 aws:
   - name: bmserveraws
     ec2name: <%= AWS_NAME_PREFIX %>bmserveraws
-    ami: ami-3a1a464d
+    ami: ami-f8fd238b
     instance_type: m3.2xlarge
     region: eu-west-1
     volume_type: gp2
@@ -99,6 +99,9 @@ aws:
     aws_secret_key: <%= AWS_SECRET %>
     aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    file_provisioners:
+      - source: cache/alfresco-provisioning-1.0-SNAPSHOT.jar
+        destination: /data/alfresco/alfresco-provisioning-1.0-SNAPSHOT.jar
     shell_provisioners:
       - path: repoupdate.sh
         args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>syncaws services
@@ -164,7 +167,7 @@ aws:
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
   - name: syncaws
     ec2name: <%= AWS_NAME_PREFIX %>syncaws
-    ami: ami-e1604896
+    ami: ami-95fb25e6
     instance_type: m3.2xlarge
     region: eu-west-1
     volume_type: io1
@@ -175,6 +178,9 @@ aws:
     aws_secret_key: <%= AWS_SECRET %>
     aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    file_provisioners:
+      - source: cache/alfresco-provisioning-1.0-SNAPSHOT.jar
+        destination: /data/alfresco/alfresco-provisioning-1.0-SNAPSHOT.jar
     shell_provisioners:
       - path: syncupdate.sh
         args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>alfaws remote
@@ -209,21 +215,32 @@ aws:
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
     shell_provisioners:
       - path: servicesupdate.sh
-  - name: cassandraaws
-    ec2name: <%= AWS_NAME_PREFIX %>cassandraaws
-    ami: ami-234ecc54
-    instance_type: m3.2xlarge
+  - name: cassandra1aws
+    ec2name: <%= AWS_NAME_PREFIX %>cassandra1aws
+    ami: ami-7f33cd08
+    user_data: --clustername sync --totalnodes 2 --version community
+    instance_type: m3.xlarge
     region: eu-west-1
-    volume_type: io1
-    iops: 250
-    volume_size: 30
+    volume_type: gp2
+    volume_size: 10
     box: dummy
     aws_access_key: <%= AWS_ACCESS_KEY %>
     aws_secret_key: <%= AWS_SECRET %>
     aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
-    shell_provisioners:
-      - path: cassandrainstall.sh
+  - name: cassandra2aws
+    ec2name: <%= AWS_NAME_PREFIX %>cassandra2aws
+    ami: ami-7f33cd08
+    user_data: --clustername sync --totalnodes 2 --version community
+    instance_type: m3.xlarge
+    region: eu-west-1
+    volume_type: gp2
+    volume_size: 10
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
   - name: esaws
     ec2name: <%= AWS_NAME_PREFIX %>esaws
     ami: ami-6aebb81d

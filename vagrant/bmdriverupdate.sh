@@ -41,7 +41,7 @@ else
 fi
 
 echo "Set ActiveMQ broker URL to failover:(tcp://${MESSAGING_IP}:61616?connectionTimeout=5000)?timeout=500&maxReconnectAttempts=5&maxReconnectDelay=500"
-echo "JAVA_OPTS=\"\$JAVA_OPTS -Dmirror.name=$7 -Dmessaging.broker.url=tcp://${MESSAGING_IP}:61616 -DalfrescoHost=${ALFRESCO_IP} -Dmongo.config.host=$BM_SERVER_IP\"" | sudo tee -a /usr/share/tomcat7/bin/setenv.sh
+echo "JAVA_OPTS=\"\$JAVA_OPTS -Dmirror.name=$7 -Dmessaging.broker.url=tcp://${MESSAGING_IP}:61616 -DalfrescoHost=${ALFRESCO_IP} -Dmongo.config.host=$BM_SERVER_IP\"" | sudo tee /usr/share/tomcat7/bin/setenv.sh
 #java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml messaging.broker.url "failover:(tcp://${MESSAGING_IP}:61616?connectionTimeout=5000)?timeout=500&maxReconnectAttempts=5&maxReconnectDelay=500"
 
 #echo "JAVA_OPTS=\"\$JAVA_OPTS -Dmirror.name=$7 -Dmessaging.broker.url=tcp://${SERVICES_IP}:61616 -DalfrescoHost=${ALFRESCO_IP} -Dmongo.config.host=$BM_SERVER_IP\"" | sudo tee -a /usr/share/tomcat7/bin/setenv.sh

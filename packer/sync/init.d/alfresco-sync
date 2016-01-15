@@ -18,8 +18,10 @@ PID_FILE="/var/run/desktop_sync/service-sync.pid"
 SYNC_VERSION=1.1-SNAPSHOT
 SYNC_JAR=service-sync-$SYNC_VERSION.jar
 
-#START_CMD="\"cd $SYNC_LOCATION;java -XX:MaxPermSize=1024m -Xms256M -Xmx8G -agentpath:/data/alfresco/yourkit/yourkit/libyjpagent.so=onexit=snapshot,dir=/data/alfresco/yourkit/snapshots,probe_off=*,probe_on=com.yourkit.probes.builtin.Databases -Djava.io.tmpdir=/data/alfresco/alfresco-sync/tmp -jar $SYNC_JAR server config.yml > /dev/null 2>&1 &\""
-START_CMD="\"cd $SYNC_LOCATION;java -XX:MaxPermSize=1024m -Xms256M -Xmx8G -Djava.io.tmpdir=/data/alfresco/alfresco-sync/tmp -jar $SYNC_JAR server config.yml > /dev/null 2>&1 &\""
+#YOURKIT_OPTS="-agentpath:/data/alfresco/yourkit/yourkit/libyjpagent.so=onexit=snapshot,dir=/data/alfresco/yourkit/snapshots,probe_off=*,probe_on=com.yourkit.probes.builtin.Databases"
+YOURKIT_OPTS=""
+START_CMD="\"cd $SYNC_LOCATION;java -XX:MaxPermSize=1024m -Xms256M -Xmx2G ${YOURKIT_OPS} -Djava.io.tmpdir=/data/alfresco/alfresco-sync/tmp -jar $SYNC_JAR server config.yml > /dev/null 2>&1 &\""
+
 NAME="alfresco-sync"
 PGREP_STRING="$SYNC_JAR"
 

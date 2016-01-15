@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# NTP
+apt-key net-update
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 437D05B5
+
 cd /data/alfresco
 
 cp -R /tmp/yourkit/ /data/alfresco/yourkit
@@ -25,6 +29,11 @@ echo "host all all 10.0.0.0/8 trust" >> /data/alfresco/alfresco-${ALF_VERSION}/a
 #echo "" >> /data/alfresco/alfresco-${ALF_VERSION}/alf_data/postgresql/postgresql.conf
 echo "listen_addresses='\"'*'\"'" >> /data/alfresco/alfresco-${ALF_VERSION}/alf_data/postgresql/postgresql.conf
 sed -i -e "s/#checkpoint_segments = 3/checkpoint_segments = 10/" /data/alfresco/alfresco-${ALF_VERSION}/alf_data/postgresql/postgresql.conf
+
+
+
+
+
 
 cp /tmp/alfresco-sync/amps-repository/*.amp /data/alfresco/alfresco-${ALF_VERSION}/amps
 /data/alfresco/alfresco-${ALF_VERSION}/java/bin/java -jar /data/alfresco/alfresco-${ALF_VERSION}/bin/alfresco-mmt.jar install /data/alfresco/alfresco-${ALF_VERSION}/amps /data/alfresco/alfresco-${ALF_VERSION}/tomcat/webapps/alfresco.war -directory
@@ -57,3 +66,7 @@ sed -i -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /data/alfr
 echo "Copying license /tmp/alfresco-license.lic to /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco/extension/license"
 mkdir -p /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco/extension/license
 cp /tmp/alfresco-license.lic /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco/extension/license
+
+# sysstat
+sed -i -e "s/ENABLED=\"false\"/ENABLED=\"true\"/" /etc/default/sysstat
+sed -i -e "s#5-55/10#*/1#" /etc/cron.d/sysstat

@@ -7,11 +7,15 @@ apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
 add-apt-repository -y ppa:webupd8team/java
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
 
+# NTP
+sudo apt-key net-update
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 437D05B5
+
 # stupid loop to get around ubuntu package mirror problems
 for attempt in 1 2 3; do
   echo "Trying to install, attempt $attempt"
   apt-get update -yq --fix-missing
-  apt-get -q -y install unzip oracle-java8-installer postgresql-9.4 postgresql-client htop sysstat
+  apt-get -q -y install unzip oracle-java8-installer postgresql-9.4 postgresql-client ntp sysstat htop iotop ntp
 done
 
 ln -s /usr/lib/jvm/java-8-oracle /usr/lib/jvm/default-java

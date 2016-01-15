@@ -39,12 +39,6 @@ Vagrant.configure(2) do |config|
          aws.ami = servers["ami"]
          aws.instance_type = servers["instance_type"]
          aws.region = servers["region"]
-         #aws.availability_zone = "us-east-1a"
-         #aws.private_ip_address = "10.0.0.101"
-         #aws.subnet_id = "subnet-25df8544" 
-         #aws.elastic_ip = true
-   
-         aws.security_groups = ["Sync-01"]
 
          aws.tags = {
             'InstanceType' => "Sync",
@@ -52,24 +46,13 @@ Vagrant.configure(2) do |config|
             'Name' => servers["ec2name"]
          }
 
-         if servers["volume_type"] == 'gp2'
-             aws.block_device_mapping = [{
-                'DeviceName' => '/dev/sdb',
-                'Ebs.VolumeSize' => servers["volume_size"],
-                'Ebs.VolumeType' => servers["volume_type"],
-                'Ebs.DeleteOnTermination' => 'true'
-             }]
-         elsif servers["volume_type"] == 'io1'
-             aws.block_device_mapping = [{
-                'DeviceName' => '/dev/sdb',
-                'Ebs.VolumeSize' => servers["volume_size"],
-                'Ebs.VolumeType' => servers["volume_type"],
-                'Ebs.Iops' => servers["iops"],
-                'Ebs.DeleteOnTermination' => 'true'
-             }]
-             aws.ebs_optimized = 'true'
+         if servers["vpc"] == true
+             aws.subnet_id = servers["subnet_id"]
+             aws.associate_public_ip = true
+             aws.security_groups = servers["security_group"]
+             aws.ssh_host_attribute = :public_ip_address
          else
-
+             aws.security_groups = ["Sync-01"]
          end
 
          override.ssh.username = "ubuntu"

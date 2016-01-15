@@ -14,7 +14,8 @@ useradd -m -s /bin/bash desktop_sync
 
 # Unzip the sync distribution
 
-unzip -q /tmp/sync-dist.zip -d /data/alfresco/alfresco-sync
+unzip -q /tmp/sync-dist.zip -d /tmp
+mv /tmp/sync /data/alfresco/alfresco-sync
 
 # Create directories with correct permissions
 

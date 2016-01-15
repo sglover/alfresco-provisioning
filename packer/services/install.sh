@@ -13,8 +13,14 @@ export DEBIAN_FRONTEND=noninteractive
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
 add-apt-repository -y ppa:webupd8team/java
 echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
+
+# Postfix preseed
+echo "postfix postfix/main_mailer_type select smarthost" | chroot $rootfs debconf-set-selections 
+echo "postfix postfix/mailname string $hostname.localdomain" | chroot $rootfs debconf-set-selections 
+echo "postfix postfix/relayhost string smtp.localdomain" | chroot $rootfs debconf-set-selections
+
 apt-get -y update
-apt-get install -y unzip build-essential dkms zlib1g-dev libssl-dev libreadline6-dev libyaml-dev curl wget git-core gcc g++ make autoconf python-software-properties screen puppet puppetmaster htop unzip oracle-java8-installer
+apt-get install -y unzip build-essential dkms zlib1g-dev libssl-dev libreadline6-dev libyaml-dev curl wget git-core gcc g++ make autoconf python-software-properties screen puppet puppetmaster htop unzip oracle-java8-installer ntp
 ln -s /usr/lib/jvm/java-8-oracle /usr/lib/jvm/default-java
 cp -R /tmp/yourkit/ /data/alfresco/yourkit
 

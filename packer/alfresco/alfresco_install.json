@@ -197,15 +197,7 @@
     {
         "type": "shell",
         "inline": [    
-            "apt-get -q -y install unzip libreoffice"
-        ],
-        "only": [ "amazon-ebs" ],
-        "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
-    },
-    {
-        "type": "shell",
-        "inline": [    
-            "apt-get -q -y install unzip libreoffice linux-image-generic-lts-raring linux-headers-generic-lts-raring build-essential dkms zlib1g-dev libssl-dev libreadline6-dev libyaml-dev curl wget git-core gcc g++ make autoconf python-software-properties screen puppet puppetmaster htop postgresql-client sys-stat htop"
+            "apt-get -q -y install unzip libreoffice linux-image-generic-lts-raring linux-headers-generic-lts-raring build-essential dkms zlib1g-dev libssl-dev libreadline6-dev libyaml-dev curl wget git-core gcc g++ make autoconf python-software-properties screen puppet puppetmaster htop postgresql-client sys-stat htop ntp"
         ],
         "only": [ "virtualbox-iso" ],
         "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
