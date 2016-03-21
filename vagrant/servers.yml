@@ -93,7 +93,7 @@ aws:
     region: eu-west-1
     volume_type: io1
     iops: 250
-    volume_size: 60
+    volume_size: 120
     box: dummy
     aws_access_key: <%= AWS_ACCESS_KEY %>
     aws_secret_key: <%= AWS_SECRET %>
@@ -185,21 +185,45 @@ aws:
       - path: syncupdate.sh
         args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>alfaws remote
   - name: sync1aws
-    ec2name: <%= AWS_NAME_PREFIX %>syncaws
-    ami: ami-e1604896
+    ec2name: <%= AWS_NAME_PREFIX %>sync1aws
+    ami: ami-95fb25e6
     instance_type: m3.2xlarge
     region: eu-west-1
     volume_type: io1
     volume_size: 100
     iops: 240
+    vpc: true
+    private_ip_address: 10.1.0.4
+    security_groups: sg-922b95f6
+    subnet_id: subnet-14819763
+#    tenancy: default
     box: dummy
     aws_access_key: <%= AWS_ACCESS_KEY %>
     aws_secret_key: <%= AWS_SECRET %>
     aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
-    shell_provisioners:
-      - path: syncupdate.sh
-        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>alfaws remote
+    file_provisioners:
+      - source: cache/alfresco-provisioning-1.0-SNAPSHOT.jar
+        destination: /data/alfresco/alfresco-provisioning-1.0-SNAPSHOT.jar
+#    shell_provisioners:
+#      - path: syncupdate.sh
+#        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>alfaws remote
+#  - name: sync1aws
+#    ec2name: <%= AWS_NAME_PREFIX %>syncaws
+#    ami: ami-e1604896
+#    instance_type: m3.2xlarge
+#    region: eu-west-1
+#    volume_type: io1
+#    volume_size: 100
+#    box: dummy
+#    iops: 240
+#    aws_access_key: <%= AWS_ACCESS_KEY %>
+#    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+#    aws_secret_key: <%= AWS_SECRET %>
+#    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+#    shell_provisioners:
+#      - path: syncupdate.sh
+#        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws <%= AWS_NAME_PREFIX %>alfaws remote
   - name: servicesaws
     ec2name: <%= AWS_NAME_PREFIX %>servicesaws
     ami: ami-c25708b5

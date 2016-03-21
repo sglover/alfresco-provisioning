@@ -13,7 +13,7 @@ sed -i -e "s/#temp_buffers = 8MB/temp_buffers = 8MB/" /etc/postgresql/9.4/main/p
 sed -i -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/9.4/main/postgresql.conf
 sed -i -e "s/max_connections = 100/max_connections = 410/" /etc/postgresql/9.4/main/postgresql.conf
 sed -i -e "s/#checkpoint_segments = 3/checkpoint_segments = 20/" /etc/postgresql/9.4/main/postgresql.conf
-sed -i -e "s/#autovacuum_naptime = 1min/autovacuum_naptime = 5/" /etc/postgresql/9.4/main/postgresql.conf
+sed -i -e "s/#autovacuum_naptime = 1min/autovacuum_naptime = 10/" /etc/postgresql/9.4/main/postgresql.conf
 sed -i -e "s/#autovacuum_vacuum_threshold = 50/autovacuum_vacuum_threshold = 5/" /etc/postgresql/9.4/main/postgresql.conf
 sed -i -e "s/#autovacuum_analyze_threshold = 50/autovacuum_analyze_threshold = 5/" /etc/postgresql/9.4/main/postgresql.conf
 sed -i -e "s/#effective_cache_size = 128MB/effective_cache_size = 15GB/" /etc/postgresql/9.4/main/postgresql.conf

@@ -48,6 +48,7 @@ echo "JAVA_OPTS=\"\$JAVA_OPTS -Dmirror.name=$7 -Dmessaging.broker.url=tcp://${ME
 #echo "JAVA_OPTS=\"-Dmirror.name=$7 -Dmessaging.broker.url=tcp://${SYNC_IP}:61616 -DalfrescoHost=${ALFRESCO_IP} -Dmongo.config.host=$BM_SERVER_IP\"" | sudo tee -a /usr/share/tomcat7/bin/setenv.sh
 
 echo "CATALINA_TMPDIR=\"/tmp/tomcat7\"" | sudo tee -a /usr/share/tomcat7/bin/setenv.sh
+echo "CATALINA_OPTS=\" -Xmx3096M\" " | sudo tee -a /usr/share/tomcat7/bin/setenv.sh
 /etc/init.d/tomcat7 restart
 
 echo "Uploading releases and creating tests, if necessary"

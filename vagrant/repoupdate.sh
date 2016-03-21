@@ -33,22 +33,6 @@ fi
 
 PUBLIC_DNS=`curl -s http://169.254.169.254/latest/meta-data/public-hostname`
 
-echo "Getting sync server hostname"
-SYNC_SERVER_HOSTNAME=`java -jar $JARNAME -hostname $1 $2 $4`
-if [[ $? == "0" ]]; then
-    echo "Sync server hostname is $SYNC_SERVER_HOSTNAME"
-
-    SYNC_SERVER_URI="https://$SYNC_SERVER_HOSTNAME:9090/alfresco"
-    echo "Sync server uri is $SYNC_SERVER_URI"
-    
-    echo "Update repository sync service uri"
-    
-    echo "update the sync service uri to point to the sync server box"
-    java -jar $JARNAME -syncuri $JMX_USER $JMX_PASS $SYNC_SERVER_URI  
-else
-    echo "Sync server instance is not running"
-fi
-
 if [[ $ACTIVEMQ_BROKER_HOST_TYPE == "services" ]]; then
     MESSAGING_IP=$SERVICES_SERVER_HOSTNAME
     echo "Services host messaging - IP $MESSAGING_IP"
@@ -65,6 +49,22 @@ java -Dsun.rmi.transport.tcp.responseTimeout=5000 -jar $JARNAME -brokeruri $JMX_
 
 #echo "Set ActiveMQ broker URL to failover:(tcp://${MESSAGING_IP}:61616?connectionTimeout=5000)?timeout=500&maxReconnectAttempts=5&maxReconnectDelay=500"
 #echo "JAVA_OPTS=\"-Dmirror.name=$7 -Dmessaging.broker.url=tcp://${MESSAGING_IP}:61616 -DalfrescoHost=${ALFRESCO_IP} -Dmongo.config.host=$BM_SERVER_IP\"" | sudo tee -a /usr/share/tomcat7/bin/setenv.sh
+
+echo "Getting sync server hostname"
+SYNC_SERVER_HOSTNAME=`java -jar $JARNAME -hostname $1 $2 $4`
+if [[ $? == "0" ]]; then
+    echo "Sync server hostname is $SYNC_SERVER_HOSTNAME"
+
+    SYNC_SERVER_URI="https://$SYNC_SERVER_HOSTNAME:9090/alfresco"
+    echo "Sync server uri is $SYNC_SERVER_URI"
+    
+    echo "Update repository sync service uri"
+    
+    echo "update the sync service uri to point to the sync server box"
+    java -jar $JARNAME -syncuri $JMX_USER $JMX_PASS $SYNC_SERVER_URI  
+else
+    echo "Sync server instance is not running"
+fi
 
 sed -i '/sync.service.uris=/d' /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco-global.properties
 echo "sync.service.uris=https://${SYNC_SERVER_HOSTNAME}:9090/alfresco" | sudo tee -a /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco-global.properties

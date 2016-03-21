@@ -26,7 +26,7 @@ if [[ $ACTIVEMQ_BROKER_HOST_TYPE == "remote" ]]; then
     java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml messaging.broker.host $SERVICES_SERVER_HOSTNAME
 else
     echo "Set ActiveMQ broker URL to failover:(tcp://localhost:61616?connectionTimeout=5000)?timeout=500&maxReconnectAttempts=5&maxReconnectDelay=500"
-    java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml messaging.broker.url localhost
+    java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml messaging.broker.host localhost
 fi
 
 echo "Set loggers"
@@ -34,13 +34,12 @@ java -jar $JARNAME -setLogger /data/alfresco/alfresco-sync/service-sync/config.y
 echo "Done"
 
 echo "Set Sync Service Alfresco auth URL to http://${ALFRESCO_SERVER_HOSTNAME}:8080/alfresco/api/-default-/public/cmis/versions/1.1/browser"
-java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml sync.authentication.basicAuthUrl http://${ALFRESCO_SERVER_HOSTNAME}:8080/alfresco/api/-default-/public/cmis/versions/1.1/browser
-java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml sync.repo.hostname ${ALFRESCO_SERVER_HOSTNAME}
+java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml repo.hostname ${ALFRESCO_SERVER_HOSTNAME}
 echo "Done"
 
-echo "Set Cassandra Hosts"
-java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml cassandra.hosts localhost
-echo "Done"
+#echo "Set Cassandra Hosts"
+#java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml cassandra.hosts localhost
+#echo "Done"
 
 #java -jar $JARNAME -updateYaml /data/alfresco/alfresco-sync/service-sync/config.yml messaging.nodeEvents.numThreads 10
 
