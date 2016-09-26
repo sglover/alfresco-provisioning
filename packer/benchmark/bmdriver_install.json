@@ -12,27 +12,15 @@
         "security_group_id": "sg-24ec6652",
         "ami_block_device_mappings": [
         {
-            "device_name": "/dev/sda1",
-            "volume_size": 30,
-            "volume_type": "gp2",
-            "delete_on_termination": true
-        },
-        {
             "device_name": "/dev/sdb",
-            "volume_size": 10,
+            "volume_size": 30,
             "volume_type": "gp2",
             "delete_on_termination": true
         }],
         "launch_block_device_mappings": [
         {
-            "device_name": "/dev/sda1",
-            "volume_size": 30,
-            "volume_type": "gp2",
-            "delete_on_termination": true
-        },
-        {
             "device_name": "/dev/sdb",
-            "volume_size": 10,
+            "volume_size": 30,
             "volume_type": "gp2",
             "delete_on_termination": true
         }]
@@ -41,6 +29,7 @@
     {
         "type": "shell",
         "script": "bmdriver_files/prepare-data-partition.sh",
+        "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'",
         "only": [ "amazon-ebs" ]
     },
     {
@@ -103,7 +92,8 @@
         "type": "shell",
         "script": "bmdriver_files/install.sh",
         "execute_command": "echo 'ubuntu' | sudo -S sh '{{ .Path }}'"
-    }],
+    }
+    ],
     "post-processors": [{
       "output": "bmdriver.box",
       "type": "vagrant",
@@ -111,7 +101,7 @@
     }],
     "variables": {
         "hostname": "packer-test",
-        "source_ami": "ami-234ecc54",
+        "source_ami": "ami-fbdf4b88",
         "ami_name": "bmdriver-{{timestamp}}",
         "ami_description": "",
         "ami_region": "eu-west-1",

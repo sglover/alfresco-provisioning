@@ -50,6 +50,7 @@ Vagrant.configure(2) do |config|
              aws.private_ip_address = servers["private_ip_address"]
              aws.subnet_id = servers["subnet_id"]
              aws.associate_public_ip = true
+             aws.user_data = servers["user_data"]
              aws.security_groups = servers["security_groups"]
              aws.ssh_host_attribute = :public_ip_address
          else

@@ -10,7 +10,7 @@ sed -i -e "s#data_directory = '/var/lib/postgresql/9.4/main'#data_directory = '/
 #sed -i -e "s/#work_mem = 4MB/work_mem = 8MB/" /etc/postgresql/9.4/main/postgresql.conf
 sed -i -e "s/shared_buffers = 128MB/shared_buffers = 5GB/" /etc/postgresql/9.4/main/postgresql.conf
 sed -i -e "s/#temp_buffers = 8MB/temp_buffers = 8MB/" /etc/postgresql/9.4/main/postgresql.conf
-sed -i -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/9.4/main/postgresql.conf
+sed -i -e "s/#listen_addresses = '*'/listen_addresses = '*'/" /etc/postgresql/9.4/main/postgresql.conf
 sed -i -e "s/max_connections = 100/max_connections = 410/" /etc/postgresql/9.4/main/postgresql.conf
 sed -i -e "s/#checkpoint_segments = 3/checkpoint_segments = 20/" /etc/postgresql/9.4/main/postgresql.conf
 sed -i -e "s/#autovacuum_naptime = 1min/autovacuum_naptime = 10/" /etc/postgresql/9.4/main/postgresql.conf

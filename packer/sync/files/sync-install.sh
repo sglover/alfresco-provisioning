@@ -55,6 +55,8 @@ chmod +x /tmp/init.d/*
 cp /tmp/init.d/* /etc/init.d
 update-rc.d activemq defaults
 
+curl https://jdbc.postgresql.org/download/postgresql-9.4.1211.jre7.jar -o /data/alfresco/alfresco-sync/service-sync/postgresql.jar
+
 # sysstat
 sed -i -e "s/ENABLED=\"false\"/ENABLED=\"true\"/" /etc/default/sysstat
 sed -i -e "s#5-55/10#*/1#" /etc/cron.d/sysstat

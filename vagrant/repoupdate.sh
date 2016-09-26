@@ -52,24 +52,26 @@ java -Dsun.rmi.transport.tcp.responseTimeout=5000 -jar $JARNAME -brokeruri $JMX_
 
 echo "Getting sync server hostname"
 SYNC_SERVER_HOSTNAME=`java -jar $JARNAME -hostname $1 $2 $4`
-if [[ $? == "0" ]]; then
-    echo "Sync server hostname is $SYNC_SERVER_HOSTNAME"
+SYNC_SERVER_URI="https://$SYNC_SERVER_HOSTNAME:9090/alfresco"
+echo "Sync server uri is $SYNC_SERVER_URI"
 
-    SYNC_SERVER_URI="https://$SYNC_SERVER_HOSTNAME:9090/alfresco"
-    echo "Sync server uri is $SYNC_SERVER_URI"
-    
-    echo "Update repository sync service uri"
-    
-    echo "update the sync service uri to point to the sync server box"
-    java -jar $JARNAME -syncuri $JMX_USER $JMX_PASS $SYNC_SERVER_URI  
-else
-    echo "Sync server instance is not running"
-fi
+#if [[ $? == "0" ]]; then
+#    echo "Sync server hostname is $SYNC_SERVER_HOSTNAME"
+#
+#    echo "Update repository sync service uri"
+#
+#    echo "update the sync service uri to point to the sync server box"
+#    java -jar $JARNAME -syncuri $JMX_USER $JMX_PASS $SYNC_SERVER_URI  
+#else
+#    echo "Sync server instance is not running"
+#fi
 
-sed -i '/sync.service.uris=/d' /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco-global.properties
-echo "sync.service.uris=https://${SYNC_SERVER_HOSTNAME}:9090/alfresco" | sudo tee -a /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco-global.properties
+sed -i '/dsync.service.uris=/d' /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco-global.properties
+echo "dsync.service.uris=SYNC_SERVER_URI" | sudo tee -a /data/alfresco/alfresco-${ALF_VERSION}/tomcat/shared/classes/alfresco-global.properties
 
 sed -i '/JAVA_OPTS=/d' /data/alfresco/alfresco-${ALF_VERSION}/tomcat/bin/setenv.sh
 echo "JAVA_OPTS=\"\$JAVA_OPTS -Djava.rmi.server.hostname=${PUBLIC_DNS}\"" | sudo tee -a /data/alfresco/alfresco-${ALF_VERSION}/tomcat/bin/setenv.sh
+
+/etc/init.d/alfresco restart tomcat
 
 echo "Done"

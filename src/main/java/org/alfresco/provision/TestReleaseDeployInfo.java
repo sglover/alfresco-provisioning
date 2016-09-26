@@ -58,164 +58,158 @@ import com.mongodb.DBObject;
  */
 public class TestReleaseDeployInfo
 {
-	public static final String UTF_8_ENCODING = "UTF-8";
-	public static final String MIME_TYPE_JSON = "application/json";
+    public static final String UTF_8_ENCODING = "UTF-8";
+    public static final String MIME_TYPE_JSON = "application/json";
 
-	private String release;
-	private int schema;
-	private String warFilename;
-	private String bmServerHostname;
-	private String bmServerPort;
-	private String bmDriverHostname;
-	private String bmDriverPort;
-	private String username;
-	private String password;
-	private String testName;
-	private String testDescription;
+    private String release;
+    private int schema;
+    private String warFilename;
+    private String bmServerHostname;
+    private String bmServerPort;
+    private String bmDriverHostname;
+    private String bmDriverPort;
+    private String username;
+    private String password;
+    private String testName;
+    private String testDescription;
 
-	private CloseableHttpClient client;
-	private MongoTestDAO testDAO;
+    private CloseableHttpClient client;
+    private MongoTestDAO testDAO;
 
-	public TestReleaseDeployInfo(String bmDriverHostname, String bmDriverPort, String username, String password,
-			String warFilename, String bmServerHostname, String bmServerPort, String testName, String testDescription)
-					throws Exception
-	{
-		int idx1 = warFilename.lastIndexOf("/");
-		int idx2 = warFilename.lastIndexOf(".");
-		this.release = warFilename.substring(idx1 + 1, idx2);
-		this.warFilename = warFilename;
-		this.bmDriverHostname = bmDriverHostname;
-		this.bmDriverPort = bmDriverPort;
-		this.username = username;
-		this.password = password;
-		this.bmServerHostname = bmServerHostname;
-		this.bmServerPort = bmServerPort;
-		this.testName = testName;
-		this.testDescription = testDescription;
-		this.schema = getSchema();
+    public TestReleaseDeployInfo(String bmDriverHostname, String bmDriverPort, String username,
+            String password, String warFilename, String bmServerHostname, String bmServerPort,
+            String testName, String testDescription) throws Exception
+    {
+        int idx1 = warFilename.lastIndexOf("/");
+        int idx2 = warFilename.lastIndexOf(".");
+        this.release = warFilename.substring(idx1 + 1, idx2);
+        this.warFilename = warFilename;
+        this.bmDriverHostname = bmDriverHostname;
+        this.bmDriverPort = bmDriverPort;
+        this.username = username;
+        this.password = password;
+        this.bmServerHostname = bmServerHostname;
+        this.bmServerPort = bmServerPort;
+        this.testName = testName;
+        this.testDescription = testDescription;
+        this.schema = getSchema();
 
-		HttpClientConnectionManager poolingConnManager = new PoolingHttpClientConnectionManager();
-		this.client = HttpClients.custom().setConnectionManager(poolingConnManager).build();
+        HttpClientConnectionManager poolingConnManager = new PoolingHttpClientConnectionManager();
+        this.client = HttpClients.custom().setConnectionManager(poolingConnManager).build();
 
         final MongoDbFactory factory = new MongoDbFactory();
         factory.setMongoURI("mongodb://" + bmServerHostname + ":27017");
         factory.setDbName("bm20-config");
         final DB db = factory.createInstance();
-		this.testDAO = new MongoTestDAO(db);
-	}
+        this.testDAO = new MongoTestDAO(db);
+    }
 
-	public String getRelease()
-	{
-		return release;
-	}
+    public String getRelease()
+    {
+        return release;
+    }
 
+    public String getWarFilename()
+    {
+        return warFilename;
+    }
 
-	public String getWarFilename()
-	{
-		return warFilename;
-	}
+    public String getBmServerHostname()
+    {
+        return bmServerHostname;
+    }
 
+    public String getBmServerPort()
+    {
+        return bmServerPort;
+    }
 
-	public String getBmServerHostname()
-	{
-		return bmServerHostname;
-	}
+    public String getBmDriverHostname()
+    {
+        return bmDriverHostname;
+    }
 
+    public String getBmDriverPort()
+    {
+        return bmDriverPort;
+    }
 
-	public String getBmServerPort()
-	{
-		return bmServerPort;
-	}
+    public String getUsername()
+    {
+        return username;
+    }
 
+    public String getPassword()
+    {
+        return password;
+    }
 
-	public String getBmDriverHostname()
-	{
-		return bmDriverHostname;
-	}
+    public String getTestName()
+    {
+        return testName;
+    }
 
+    public String getTestDescription()
+    {
+        return testDescription;
+    }
 
-	public String getBmDriverPort()
-	{
-		return bmDriverPort;
-	}
+    private String testsURL()
+    {
+        StringBuilder sb = new StringBuilder("http://");
+        sb.append(bmServerHostname);
+        sb.append(":");
+        sb.append(bmServerPort);
+        sb.append("/alfresco-benchmark-server/api/v1/tests");
+        return sb.toString();
+    }
 
+    private String testURL()
+    {
+        StringBuilder sb = new StringBuilder("http://");
+        sb.append(bmServerHostname);
+        sb.append(":");
+        sb.append(bmServerPort);
+        sb.append("/alfresco-benchmark-server/api/v1/tests/");
+        sb.append(testName);
+        return sb.toString();
+    }
 
-	public String getUsername()
-	{
-		return username;
-	}
+    private String privateEC2IPURL()
+    {
+        return "http://instance-data/latest/meta-data/local-ipv4";
+    }
 
-
-	public String getPassword()
-	{
-		return password;
-	}
-
-
-	public String getTestName()
-	{
-		return testName;
-	}
-
-
-	public String getTestDescription()
-	{
-		return testDescription;
-	}
-
-	
-
-	private String testsURL()
-	{
-		StringBuilder sb = new StringBuilder("http://");
-		sb.append(bmServerHostname);
-		sb.append(":");
-		sb.append(bmServerPort);
-		sb.append("/alfresco-benchmark-server/api/v1/tests");
-		return sb.toString();
-	}
-
-	private String testURL()
-	{
-		StringBuilder sb = new StringBuilder("http://");
-		sb.append(bmServerHostname);
-		sb.append(":");
-		sb.append(bmServerPort);
-		sb.append("/alfresco-benchmark-server/api/v1/tests/");
-		sb.append(testName);
-		return sb.toString();
-	}
-	
-	private String privateEC2IPURL()
-	{
-		return "http://instance-data/latest/meta-data/local-ipv4";
-	}
-
-	boolean isDeployed() throws IOException
-	{
-		boolean isDeployed = isDeployed(release, schema);
-		return isDeployed;
-	}
+    boolean isDeployed() throws IOException
+    {
+        boolean isDeployed = isDeployed(release, schema);
+        return isDeployed;
+    }
 
     /**
      * Populate HTTP message call with given content.
      * 
-     * @param content String content
+     * @param content
+     *            String content
      * @return {@link StringEntity} content.
-     * @throws UnsupportedEncodingException if unsupported
+     * @throws UnsupportedEncodingException
+     *             if unsupported
      */
     public StringEntity setMessageBody(final String content) throws UnsupportedEncodingException
     {
-        if (content == null || content.isEmpty()) throw new UnsupportedOperationException("Content is required.");
+        if (content == null || content.isEmpty())
+            throw new UnsupportedOperationException("Content is required.");
         return new StringEntity(content, UTF_8_ENCODING);
     }
 
     /**
      * Populate HTTP message call with given content.
      * 
-     * @param json {@link JSONObject} content
+     * @param json
+     *            {@link JSONObject} content
      * @return {@link StringEntity} content.
-     * @throws UnsupportedEncodingException if unsupported
+     * @throws UnsupportedEncodingException
+     *             if unsupported
      */
     public StringEntity setMessageBody(final JSONObject json) throws UnsupportedEncodingException
     {
@@ -229,343 +223,338 @@ public class TestReleaseDeployInfo
 
     private String getEC2PrivateIP() throws ParseException, IOException
     {
-    	String ec2PrivateIP = null;
+        String ec2PrivateIP = null;
 
-		String url = privateEC2IPURL();
-		HttpGet get = new HttpGet(url);
-		CloseableHttpResponse httpResponse = client.execute(get);
-		try
-		{
-			StatusLine status = httpResponse.getStatusLine();
-			// Expecting "OK" status
-			if(status.getStatusCode() == HttpStatus.SC_OK)
-			{
-				HttpEntity entity = httpResponse.getEntity();
-				ec2PrivateIP = EntityUtils.toString(entity);
-				System.out.println("ec2PrivateIP = " + ec2PrivateIP);
-			}
-			else
-			{
-				throw new RuntimeException("Unable to get test " + testName + ", " + httpResponse + ", " + status);
-			}
-		}
-		finally
-		{
-			if(httpResponse != null)
-			{
-				httpResponse.close();
-			}
-		}
+        String url = privateEC2IPURL();
+        HttpGet get = new HttpGet(url);
+        CloseableHttpResponse httpResponse = client.execute(get);
+        try
+        {
+            StatusLine status = httpResponse.getStatusLine();
+            // Expecting "OK" status
+            if (status.getStatusCode() == HttpStatus.SC_OK)
+            {
+                HttpEntity entity = httpResponse.getEntity();
+                ec2PrivateIP = EntityUtils.toString(entity);
+                System.out.println("ec2PrivateIP = " + ec2PrivateIP);
+            } else
+            {
+                throw new RuntimeException(
+                        "Unable to get test " + testName + ", " + httpResponse + ", " + status);
+            }
+        } finally
+        {
+            if (httpResponse != null)
+            {
+                httpResponse.close();
+            }
+        }
 
-		return ec2PrivateIP;
+        return ec2PrivateIP;
     }
 
     private boolean isDeployed(String release, int schema) throws ParseException, IOException
-	{
-		boolean isDeployed = false;
+    {
+        boolean isDeployed = false;
 
-		String ec2PrivateIP = getEC2PrivateIP();
+        String ec2PrivateIP = getEC2PrivateIP();
 
-		DBCursor cursor = testDAO.getDrivers(release, schema, true);
-		try
-		{
-			for(DBObject dbObject : cursor)
-			{
-				String releasePrivateDNS = (String)dbObject.get("ipAddress");
-				if(releasePrivateDNS.equals(ec2PrivateIP))
-				{
-					isDeployed = true;
-				}
-			}
+        DBCursor cursor = testDAO.getDrivers(release, schema, true);
+        try
+        {
+            for (DBObject dbObject : cursor)
+            {
+                String releasePrivateDNS = (String) dbObject.get("ipAddress");
+                if (releasePrivateDNS.equals(ec2PrivateIP))
+                {
+                    isDeployed = true;
+                }
+            }
 
-			System.out.println("isDeployed " + ec2PrivateIP + ", " + release + ", " + schema + ", " + isDeployed);
-		}
-		finally
-		{
-			if(cursor != null)
-			{
-				cursor.close();
-			}
-		}
+            System.out.println("isDeployed " + ec2PrivateIP + ", " + release + ", " + schema + ", "
+                    + isDeployed);
+        } finally
+        {
+            if (cursor != null)
+            {
+                cursor.close();
+            }
+        }
 
         return isDeployed;
-	}
+    }
 
-	@SuppressWarnings("unchecked")
-	private void createTest() throws IOException
-	{
-		JSONObject body = new JSONObject();
-		body.put("name", testName);
-		body.put("description", testDescription);
-		body.put("release", release);
-		body.put("schema", schema);
-		StringEntity entity = setMessageBody(body);
+    @SuppressWarnings("unchecked")
+    private void createTest() throws IOException
+    {
+        JSONObject body = new JSONObject();
+        body.put("name", testName);
+        body.put("description", testDescription);
+        body.put("release", release);
+        body.put("schema", schema);
+        StringEntity entity = setMessageBody(body);
 
-		String url = testsURL();
-		HttpPost post = new HttpPost(url);
-		post.setEntity(entity);
-		CloseableHttpResponse httpResponse = client.execute(post);
-		try
-		{
-			StatusLine status = httpResponse.getStatusLine();
-			// Expecting "OK" status
-			if(status.getStatusCode() == HttpStatus.SC_OK)
-			{
-				System.out.println("Test " + testName + " created");
-			}
-			else if(status.getStatusCode() == HttpStatus.SC_CONFLICT)
-			{
-				// already created
-				System.out.println("Test " + testName + " already created");
-			}
-			else
-			{
-				throw new RuntimeException("Unable to create test " + testName + ", " + httpResponse + ", " + status);
-			}
-		}
-		finally
-		{
-			if(httpResponse != null)
-			{
-				httpResponse.close();
-			}
-		}
-	}
+        String url = testsURL();
+        HttpPost post = new HttpPost(url);
+        post.setEntity(entity);
+        CloseableHttpResponse httpResponse = client.execute(post);
+        try
+        {
+            StatusLine status = httpResponse.getStatusLine();
+            // Expecting "OK" status
+            if (status.getStatusCode() == HttpStatus.SC_OK)
+            {
+                System.out.println("Test " + testName + " created");
+            } else if (status.getStatusCode() == HttpStatus.SC_CONFLICT)
+            {
+                // already created
+                System.out.println("Test " + testName + " already created");
+            } else
+            {
+                throw new RuntimeException(
+                        "Unable to create test " + testName + ", " + httpResponse + ", " + status);
+            }
+        } finally
+        {
+            if (httpResponse != null)
+            {
+                httpResponse.close();
+            }
+        }
+    }
 
-	public void deleteTest() throws IOException
-	{
-		StringBuilder sb = new StringBuilder(testURL());
-		sb.append("?clean=false");
-		String url = sb.toString();
+    public void deleteTest() throws IOException
+    {
+        StringBuilder sb = new StringBuilder(testURL());
+        sb.append("?clean=false");
+        String url = sb.toString();
 
-		HttpDelete delete = new HttpDelete(url);
-		CloseableHttpResponse httpResponse = client.execute(delete);
-		try
-		{
-			StatusLine status = httpResponse.getStatusLine();
-			// Expecting "OK" status
-			if(status.getStatusCode() == HttpStatus.SC_NO_CONTENT)
-			{
-				System.out.println("Test " + testName + " deleted");
-			}
-			else
-			{
-				throw new RuntimeException("Unable to delete test " + testName + ", " + httpResponse + ", " + status);
-			}
-		}
-		finally
-		{
-			if(httpResponse != null)
-			{
-				httpResponse.close();
-			}
-		}
-	}
+        HttpDelete delete = new HttpDelete(url);
+        CloseableHttpResponse httpResponse = client.execute(delete);
+        try
+        {
+            StatusLine status = httpResponse.getStatusLine();
+            // Expecting "OK" status
+            if (status.getStatusCode() == HttpStatus.SC_NO_CONTENT)
+            {
+                System.out.println("Test " + testName + " deleted");
+            } else
+            {
+                System.err.println(
+                        "Unable to delete test " + testName + ", " + httpResponse + ", " + status);
+            }
+        } finally
+        {
+            if (httpResponse != null)
+            {
+                httpResponse.close();
+            }
+        }
+    }
 
-	private boolean testExists() throws IOException
-	{
-		boolean testExists = false;
+    private boolean testExists() throws IOException
+    {
+        boolean testExists = false;
 
-		String url = testURL();
-		HttpGet get = new HttpGet(url);
-		CloseableHttpResponse httpResponse = client.execute(get);
-		try
-		{
-			StatusLine status = httpResponse.getStatusLine();
-			// Expecting "OK" status
-			if(status.getStatusCode() == HttpStatus.SC_OK)
-			{
-				System.out.println("Test " + testName + " exists");
-				testExists = true;
-			}
-			else if(status.getStatusCode() == HttpStatus.SC_NOT_FOUND)
-			{
-				System.out.println("Test " + testName + " does not exist");
-				testExists = false;
-			}
-			else
-			{
-				throw new RuntimeException("Unable to get test " + testName + ", " + httpResponse + ", " + status);
-			}
-		}
-		finally
-		{
-			if(httpResponse != null)
-			{
-				httpResponse.close();
-			}
-		}
+        String url = testURL();
+        HttpGet get = new HttpGet(url);
+        CloseableHttpResponse httpResponse = client.execute(get);
+        try
+        {
+            StatusLine status = httpResponse.getStatusLine();
+            // Expecting "OK" status
+            if (status.getStatusCode() == HttpStatus.SC_OK)
+            {
+                System.out.println("Test " + testName + " exists");
+                testExists = true;
+            } else if (status.getStatusCode() == HttpStatus.SC_NOT_FOUND)
+            {
+                System.out.println("Test " + testName + " does not exist");
+                testExists = false;
+            } else
+            {
+                throw new RuntimeException(
+                        "Unable to get test " + testName + ", " + httpResponse + ", " + status);
+            }
+        } finally
+        {
+            if (httpResponse != null)
+            {
+                httpResponse.close();
+            }
+        }
 
-		return testExists;
-	}
+        return testExists;
+    }
 
-	public int getSchema() throws IOException, JDOMException
-	{
-		int schema = -1;
+    public int getSchema() throws IOException, JDOMException
+    {
+        int schema = -1;
 
-		BufferedReader reader = null;
-		try
-		{
-			JarArchive jarArchive = JarArchiveIo.open(new File(warFilename));
-			InputStream in = jarArchive.getResource("WEB-INF/classes/config/startup/app.properties");
-			if(in == null)
-			{
-				throw new RuntimeException("Unable to determine app.schema for test WAR, no app.properties found");
-			}
-			else
-			{
-				reader = new BufferedReader(new InputStreamReader(in));
-				String line = null;
-				while((line = reader.readLine()) != null)
-				{
-					line = line.trim();
-					if(line.toLowerCase().startsWith("app.schema"))
-					{
-						int idx = line.indexOf("=");
-						if(idx == -1)
-						{
-							throw new RuntimeException("Unable to determine app.schema for test WAR");
-						}
-						else
-						{
-							Integer i = Integer.valueOf(line.substring(idx + 1));
-							if(i == null)
-							{
-								throw new RuntimeException("Unable to determine app.schema for test WAR");
-							}
-							schema = i.intValue();
-							break;
-						}
-					}
-				}
-			}
-		}
-		finally
-		{
-			if (reader != null)
-			{
-				reader.close();
-			}
-		}
+        BufferedReader reader = null;
+        try
+        {
+            JarArchive jarArchive = JarArchiveIo.open(new File(warFilename));
+            InputStream in = jarArchive
+                    .getResource("WEB-INF/classes/config/startup/app.properties");
+            if (in == null)
+            {
+                throw new RuntimeException(
+                        "Unable to determine app.schema for test WAR, no app.properties found");
+            } else
+            {
+                reader = new BufferedReader(new InputStreamReader(in));
+                String line = null;
+                while ((line = reader.readLine()) != null)
+                {
+                    line = line.trim();
+                    if (line.toLowerCase().startsWith("app.schema"))
+                    {
+                        int idx = line.indexOf("=");
+                        if (idx == -1)
+                        {
+                            throw new RuntimeException(
+                                    "Unable to determine app.schema for test WAR");
+                        } else
+                        {
+                            Integer i = Integer.valueOf(line.substring(idx + 1));
+                            if (i == null)
+                            {
+                                throw new RuntimeException(
+                                        "Unable to determine app.schema for test WAR");
+                            }
+                            schema = i.intValue();
+                            break;
+                        }
+                    }
+                }
+            }
+        } finally
+        {
+            if (reader != null)
+            {
+                reader.close();
+            }
+        }
 
-		return schema;
-	}
+        return schema;
+    }
 
-	public void deploy() throws IOException
-	{
-		if(isDeployed())
-		{
-			System.out.println("Release " + release + " " + schema + " already deployed");
-		}
-		else
-		{
-			if(testExists())
-			{
-				deleteTest();
-			}
+    public void deploy() throws IOException
+    {
+        if (isDeployed())
+        {
+            System.out.println("Release " + release + " " + schema + " already deployed");
+        } else
+        {
+            if (testExists())
+            {
+                deleteTest();
+            }
 
-			System.out.println("Deploying war " + warFilename + ", release " + release + " schema " + schema + "...");
-			TomcatRuntimeConfiguration runtimeConfig = new TomcatRuntimeConfiguration();
-			runtimeConfig.setProperty("cargo.hostname", bmDriverHostname);
-			runtimeConfig.setProperty("cargo.servlet.port", bmDriverPort);
-			runtimeConfig.setProperty("cargo.remote.username", username);
-			runtimeConfig.setProperty("cargo.remote.password", password);
-			Tomcat7xRemoteDeployer deployer = new Tomcat7xRemoteDeployer(
-					new Tomcat7xRemoteContainer(runtimeConfig));
-			Deployable deployable = new TomcatWAR(warFilename);
-			DeployableMonitor monitor = new DeployableMonitorImpl(release, schema);
-			deployer.redeploy(deployable, monitor);
-			System.out.println("Release " + release + " " + schema + " deployed");
-		}
+            System.out.println("Deploying war " + warFilename + ", release " + release + " schema "
+                    + schema + "...");
+            TomcatRuntimeConfiguration runtimeConfig = new TomcatRuntimeConfiguration();
+            runtimeConfig.setProperty("cargo.hostname", bmDriverHostname);
+            runtimeConfig.setProperty("cargo.servlet.port", bmDriverPort);
+            runtimeConfig.setProperty("cargo.remote.username", username);
+            runtimeConfig.setProperty("cargo.remote.password", password);
+            Tomcat7xRemoteDeployer deployer = new Tomcat7xRemoteDeployer(
+                    new Tomcat7xRemoteContainer(runtimeConfig));
+            Deployable deployable = new TomcatWAR(warFilename);
+            DeployableMonitor monitor = new DeployableMonitorImpl(release, schema);
+            deployer.redeploy(deployable, monitor);
+            System.out.println("Release " + release + " " + schema + " deployed");
+        }
 
-		if(!testExists())
-		{
-			createTest();
-		}
-	}
+        if (!testExists())
+        {
+            createTest();
+        }
+    }
 
     private class DeployableMonitorImpl implements DeployableMonitor
-	{
-    	private List<DeployableMonitorListener> listeners = new LinkedList<>();
+    {
+        private List<DeployableMonitorListener> listeners = new LinkedList<>();
 
-    	private String release;
-    	private int schema;
+        private String release;
+        private int schema;
 
-    	DeployableMonitorImpl(String release, int schema)
-    	{
-    		this.schema = schema;
-    		this.release = release;
-    	}
+        DeployableMonitorImpl(String release, int schema)
+        {
+            this.schema = schema;
+            this.release = release;
+        }
 
-		/**
-		 * {@inheritDoc}
-		 * @see org.codehaus.cargo.container.deployer.DeployableMonitor#getDeployableName()
-		 */
-		public String getDeployableName()
-		{
-			return "";
-		}
+        /**
+         * {@inheritDoc}
+         * 
+         * @see org.codehaus.cargo.container.deployer.DeployableMonitor#getDeployableName()
+         */
+        public String getDeployableName()
+        {
+            return "";
+        }
 
-		/**
-		 * {@inheritDoc}
-		 * @see DeployableMonitor#registerListener(DeployableMonitorListener)
-		 */
-		public void registerListener(DeployableMonitorListener listener)
-		{
-			this.listeners.add(listener);
-		}
+        /**
+         * {@inheritDoc}
+         * 
+         * @see DeployableMonitor#registerListener(DeployableMonitorListener)
+         */
+        public void registerListener(DeployableMonitorListener listener)
+        {
+            this.listeners.add(listener);
+        }
 
-		/**
-		 * @see DeployableMonitor#monitor()
-		 */
-		public void monitor()
-		{
-    		boolean isDeployed;
+        /**
+         * @see DeployableMonitor#monitor()
+         */
+        public void monitor()
+        {
+            boolean isDeployed;
 
             try
             {
-	            isDeployed = isDeployed(release, schema);
-            }
-            catch (ParseException e)
+                isDeployed = isDeployed(release, schema);
+            } catch (ParseException e)
             {
-            	isDeployed = false;
-            }
-            catch (IOException e)
+                isDeployed = false;
+            } catch (IOException e)
             {
-            	isDeployed = false;
+                isDeployed = false;
             }
 
-			for (DeployableMonitorListener listener : listeners)
-			{
-				if (isDeployed)
-				{
-					listener.deployed();
-				}
-				else
-				{
-					listener.undeployed();
-				}
-			}
-		}
+            for (DeployableMonitorListener listener : listeners)
+            {
+                if (isDeployed)
+                {
+                    listener.deployed();
+                } else
+                {
+                    listener.undeployed();
+                }
+            }
+        }
 
-		/**
-		 * {@inheritDoc}
-		 * @see DeployableMonitor#getTimeout()
-		 */
-		public long getTimeout()
-		{
-			return 60000;
-		}
+        /**
+         * {@inheritDoc}
+         * 
+         * @see DeployableMonitor#getTimeout()
+         */
+        public long getTimeout()
+        {
+            return 60000;
+        }
 
-		@Override
+        @Override
         public Logger getLogger()
         {
             return null;
         }
 
-		@Override
+        @Override
         public void setLogger(Logger arg0)
         {
         }
-	}
+    }
 }

@@ -16,7 +16,7 @@
 		<dependency>
 		    <groupId>com.amazonaws</groupId>
 		    <artifactId>aws-java-sdk-cloudwatch</artifactId>
-		    <version>1.9.34</version>
+		    <version>1.11.10</version>
 		</dependency>
         <dependency>
             <artifactId>alfresco-benchmark-server</artifactId>
@@ -37,7 +37,7 @@
         <dependency>
           <groupId>com.amazonaws</groupId>
           <artifactId>aws-java-sdk</artifactId>
-          <version>1.9.34</version>
+          <version>1.11.10</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -54,11 +54,13 @@
             <artifactId>services-common-mongo</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.3.5</version>
         </dependency>
+         -->
 		<dependency>
 		    <groupId>junit</groupId>
 		    <artifactId>junit</artifactId>

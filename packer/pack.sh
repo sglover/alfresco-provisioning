@@ -190,7 +190,7 @@ getSyncZip() {
             if [[ "$ALFRESCO_VERSION_MAJOR" = "4.2" ]]; then
                 SYNC_DIST="../../sync-dist-4.x/target/sync-dist-4.2x.zip"
             elif [[ "$ALFRESCO_VERSION_MAJOR" = "5.0" ]]; then
-                SYNC_DIST="../../sync-dist-5.x/target/sync-dist-5.x.zip"
+                SYNC_DIST="../../sync-dist-5.x/target/AlfrescoSyncServer.zip"
             else
                 echo "Invalid alfVerm value"
                 exit 1
@@ -246,7 +246,7 @@ getSyncZip() {
         if [[ -f $SYNC_DISTRO ]]; then
             echo "Sync dist $SYNC_DISTRO is in cache"
         else
-            URL="$bamboo/SRVC-SYNC-$SYNC_DIST_BUILD/artifact/JOB1/$SYNC_DIST_VERSION-Distribution-Zip/sync-dist-$SYNC_DIST_VERSION.zip"
+            URL="$bamboo/SRVC-SYNC-$SYNC_DIST_BUILD/artifact/JOB1/$SYNC_DIST_VERSION-Distribution-Zip/AlfrescoSyncServer.zip"
             echo "Fetching sync dist from url $URL..."
             curl -u $CREDENTIALS --fail --retry 5 $URL -o $SYNC_DISTRO
         fi
@@ -313,6 +313,7 @@ else
     cd sync
     if [ "$INCLUDE_SYNC" = "y" ]; then
         echo "Using sync_install.json $SYNC_DISTRO"
+	echo $PACKER_BIN $MACHINE_READABLE build $DEBUG -only=$BUILDNAMES -var "ssh_key=$SSH_KEY" -var "aws_access_key=$AWS_ACCESS_KEY" -var "tag_sync_build_num=$SYNC_DIST_BUILD" -var "aws_secret_key=$AWS_SECRET_KEY" -var "sync_zip_path=$SYNC_DISTRO" -var "ami_name=$AMI_NAME_PREFIX-$SYNC_DIST_BUILD-$AMI_NAME_SUFFIX" -var "activemq_zip_path=$ACTIVEMQ_DISTRO" -var "ami_description=Sync $SYNC_DIST_VERSION ($SYNC_DIST_BUILD), created $currdate" sync_install.json
         $PACKER_BIN $MACHINE_READABLE build $DEBUG -only=$BUILDNAMES -var "ssh_key=$SSH_KEY" -var "aws_access_key=$AWS_ACCESS_KEY" -var "tag_sync_build_num=$SYNC_DIST_BUILD" -var "aws_secret_key=$AWS_SECRET_KEY" -var "sync_zip_path=$SYNC_DISTRO" -var "ami_name=$AMI_NAME_PREFIX-$SYNC_DIST_BUILD-$AMI_NAME_SUFFIX" -var "activemq_zip_path=$ACTIVEMQ_DISTRO" -var "ami_description=Sync $SYNC_DIST_VERSION ($SYNC_DIST_BUILD), created $currdate" sync_install.json
     else
         usage

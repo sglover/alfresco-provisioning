@@ -53,8 +53,8 @@ public class JMXService
             MBeanException, ReflectionException, IOException
     {
         ObjectName objectName = new ObjectName(
-                "Alfresco:00=DeviceSync,Name=DeviceSyncProperties");
-        Attribute attribute = new Attribute("sync.service.uris",
+                "Alfresco:00=DeviceSync,Name=DeviceSyncAdmin");
+        Attribute attribute = new Attribute("dsync.service.uris",
                 syncServiceUri);
         jmxc.getMBeanServerConnection().setAttribute(objectName, attribute);
     }

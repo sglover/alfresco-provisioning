@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo mkfs -t ext4 /dev/xvdb
-sudo mkdir /data
-sudo bash -c "echo '/dev/xvdb       /data   ext4    defaults,nofail,nobootwait        0       2' > /etc/fstab"
-sudo mount -a
+mkfs -t ext4 /dev/xvdf
+mkdir /data
+echo '/dev/xvdf       /data   ext4    defaults,nofail        0       2' | sudo tee -a /etc/fstab
+mount /data

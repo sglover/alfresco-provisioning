@@ -15,24 +15,28 @@ aws:
         args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> sync1 <%= AWS_NAME_PREFIX %>alfaws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>bmserveraws
   - name: bmdriver1aws
     ec2name: <%= AWS_NAME_PREFIX %>bmdriver1aws
-    ami: ami-111f3c66
+    ami: ami-1a3e5269
     instance_type: m3.2xlarge
     region: eu-west-1
     volume_type: gp2
     box: dummy
     aws_access_key: <%= AWS_ACCESS_KEY %>
     aws_secret_key: <%= AWS_SECRET %>
-    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
-    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+    aws_keypair_name: sglover1
+    aws_keypair_path: /Users/sglover/.ssh/sglover1.pem
     file_provisioners:
       - source: cache/alfresco-benchmark-tests-device-sync-1.0-SNAPSHOT.war
         destination: /data/alfresco/alfresco-benchmark-tests-device-sync-1.0-SNAPSHOT.war
+      - source: cache/alfresco-benchmark-repo2-1.0-SNAPSHOT.war
+        destination: /data/alfresco/alfresco-benchmark-repo2-1.0-SNAPSHOT.war
+      - source: cache/alfresco-provisioning-1.0-SNAPSHOT.jar
+        destination: /data/alfresco/alfresco-provisioning-1.0-SNAPSHOT.jar
     shell_provisioners:
       - path: bmdriverupdate.sh
-        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver1aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws yes services
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver1aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws <%= AWS_NAME_PREFIX %>repo2 alfresco <%= AWS_NAME_PREFIX %>servicesaws no services
   - name: bmdriver2aws
     ec2name: <%= AWS_NAME_PREFIX %>bmdriver2aws
-    ami: ami-111f3c66
+    ami: ami-1a3e5269
     instance_type: m3.2xlarge
     region: eu-west-1
     volume_type: gp2
@@ -44,12 +48,16 @@ aws:
     file_provisioners:
       - source: cache/alfresco-benchmark-tests-device-sync-1.0-SNAPSHOT.war
         destination: /data/alfresco/alfresco-benchmark-tests-device-sync-1.0-SNAPSHOT.war
+      - source: cache/alfresco-benchmark-repo2-1.0-SNAPSHOT.war
+        destination: /data/alfresco/alfresco-benchmark-repo2-1.0-SNAPSHOT.war
+      - source: cache/alfresco-provisioning-1.0-SNAPSHOT.jar
+        destination: /data/alfresco/alfresco-provisioning-1.0-SNAPSHOT.jar
     shell_provisioners:
       - path: bmdriverupdate.sh
-        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver2aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no services
+        args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver2aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws <%= AWS_NAME_PREFIX %>repo2 alfresco <%= AWS_NAME_PREFIX %>servicesaws no services
   - name: bmdriver3aws
     ec2name: <%= AWS_NAME_PREFIX %>bmdriver3aws
-    ami: ami-111f3c66
+    ami: ami-e3056890
     instance_type: m3.2xlarge
     region: eu-west-1
     volume_type: gp2
@@ -63,7 +71,7 @@ aws:
         args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>bmserveraws <%= AWS_NAME_PREFIX %>bmdriver3aws <%= AWS_NAME_PREFIX %>syncaws <%= AWS_NAME_PREFIX %>alfaws sync1 <%= AWS_NAME_PREFIX %>servicesaws no services
   - name: bmdriver4aws
     ec2name: <%= AWS_NAME_PREFIX %>bmdriver4aws
-    ami: ami-111f3c66
+    ami: ami-e3056890
     instance_type: m3.2xlarge
     region: eu-west-1
     volume_type: gp2
@@ -167,7 +175,7 @@ aws:
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
   - name: syncaws
     ec2name: <%= AWS_NAME_PREFIX %>syncaws
-    ami: ami-95fb25e6
+    ami: ami-c6047fb5
     instance_type: m3.2xlarge
     region: eu-west-1
     volume_type: io1
@@ -239,6 +247,53 @@ aws:
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
     shell_provisioners:
       - path: servicesupdate.sh
+  - name: test1
+    ec2name: <%= AWS_NAME_PREFIX %>test1
+    ami: ami-c25708b5
+    instance_type: m3.xlarge
+    region: eu-west-1
+    volume_type: io1
+    volume_size: 100
+    iops: 240
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+  - name: datastaxaws1
+    ec2name: <%= AWS_NAME_PREFIX %>datastaxaws
+    vpc: true
+    security_groups: sg-70e93c17
+    private_ip_address: 10.1.0.4
+    subnet_id: subnet-14819763
+    ami: ami-50520e27
+    user_data: "--clustername sg\n--totalnodes 2\n--version community"
+    instance_type: m3.large
+    region: eu-west-1
+    volume_type: gp2
+    volume_size: 10
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
+  - name: datastaxaws2
+    ec2name: <%= AWS_NAME_PREFIX %>datastaxaws
+    vpc: true
+    security_groups: sg-70e93c17
+    private_ip_address: 10.1.0.5
+    subnet_id: subnet-14819763
+    ami: ami-50520e27
+    user_data: "--clustername sg\n--totalnodes 2\n--version community"
+    instance_type: m3.large
+    region: eu-west-1
+    volume_type: gp2
+    volume_size: 10
+    box: dummy
+    aws_access_key: <%= AWS_ACCESS_KEY %>
+    aws_secret_key: <%= AWS_SECRET %>
+    aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
+    aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
   - name: cassandra1aws
     ec2name: <%= AWS_NAME_PREFIX %>cassandra1aws
     ami: ami-7f33cd08
@@ -277,9 +332,9 @@ aws:
     aws_secret_key: <%= AWS_SECRET %>
     aws_keypair_name: <%= AWS_KEYPAIR_NAME %>
     aws_keypair_path: <%= AWS_KEYPAIR_PATH %>
-    file_provisioners:
-      - source: cache/alfresco-elasticsearch-plugin-1.0-SNAPSHOT.zip
-        destination: /home/ubuntu/alfresco-elasticsearch-plugin-1.0-SNAPSHOT.zip
+#    file_provisioners:
+#      - source: cache/alfresco-elasticsearch-plugin-1.0-SNAPSHOT.zip
+#        destination: /home/ubuntu/alfresco-elasticsearch-plugin-1.0-SNAPSHOT.zip
     shell_provisioners:
       - path: esupdate.sh
         args: <%= AWS_ACCESS_KEY %> <%= AWS_SECRET %> <%= AWS_NAME_PREFIX %>servicesaws
